@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+<insert parameterType="hashmap" id="insert"> insert into board (title, contents) values (#{title}, #{contents}) </insert>
+<select id="selectList" resultType="hashmap"> select * from board where del_yn = 'N' </select>
+<select parameterType="hashmap" id="selectOne" resultType="hashmap"> select * from board where del_yn = 'N' and no = #{no} </select>
+<update parameterType="hashmap" id="update"> update board set title = #{title} ,contents = #{contents} where no = #{no} </update>
+<update parameterType="hashmap" id="delete"> update board set del_yn = 'Y' where no = #{no} </update>
+</mapper>

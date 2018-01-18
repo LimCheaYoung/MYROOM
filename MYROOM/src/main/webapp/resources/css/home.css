@@ -1,0 +1,152 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:700,800);
+@import url('//cdn.rawgit.com/young-ha/webfont-archive/master/css/Godo.css');
+html,
+body {
+    margin: 0;
+    font-family: 'Godo', sans-serif;
+}
+
+@media screen and ((min-width: 768px)) {}
+
+
+/*************************************************************/
+/*******상단********/
+
+.navbar {
+    background-color: rgb(64, 64, 64);
+}
+
+.navbar-right:nth-child(1)>li>a {
+    font-family: 'Raleway', sans-serif;
+}
+
+.logo {
+    width: 100px;
+    background-image: url(../img/logo.png)!important;
+    background-repeat: no-repeat;
+}
+
+.container-fluid .navbar-header {
+    float: none!important;
+}
+
+.navbar-toggle .icon-bar {
+    background-color: white;
+}
+
+.navbar-brand:nth-child(2),
+.navbar-brand:nth-child(3) {
+    font-size: 12px;
+    float: right;
+}
+
+
+/*******박스********/
+
+.inBox {
+    width: 100%;
+    overflow: hidden;
+    cursor: move;
+}
+
+
+/*.inBox::-webkit-scrollbar {
+    display: none;
+}*/
+
+canvas {
+    -webkit-transform-origin: 10% 0;
+}
+
+.interface {
+    margin-left: 5px;
+    float: right
+}
+
+.interface button {
+    background-color: #ffffff;
+}
+.interface button:hover{
+    background-color: #cbcbcb;
+}
+
+
+/*******컨테이너******/
+.mymenu {
+    background-color: #dbd1d3;
+    border-radius: 10px;
+}
+
+.mymenu a {
+    color: #434343;
+}
+
+
+/*******보관함********/
+
+.panel.with-nav-tabs .panel-heading {
+    padding: 5px 5px 0 5px;
+}
+
+.panel.with-nav-tabs .nav-tabs {
+    border-bottom: none;
+}
+
+.panel.with-nav-tabs .nav-justified {
+    margin-bottom: -1px;
+}
+
+.with-nav-tabs.panel-danger .nav-tabs>li>a,
+.with-nav-tabs.panel-danger .nav-tabs>li>a:hover,
+.with-nav-tabs.panel-danger .nav-tabs>li>a:focus {
+    color: #a94442;
+}
+
+.with-nav-tabs.panel-danger .nav-tabs>.open>a,
+.with-nav-tabs.panel-danger .nav-tabs>.open>a:hover,
+.with-nav-tabs.panel-danger .nav-tabs>.open>a:focus,
+.with-nav-tabs.panel-danger .nav-tabs>li>a:hover,
+.with-nav-tabs.panel-danger .nav-tabs>li>a:focus {
+    color: #a94442;
+    background-color: #ebccd1;
+    border-color: transparent;
+}
+
+.with-nav-tabs.panel-danger .nav-tabs>li.active>a,
+.with-nav-tabs.panel-danger .nav-tabs>li.active>a:hover,
+.with-nav-tabs.panel-danger .nav-tabs>li.active>a:focus {
+    color: #a94442;
+    background-color: #fff;
+    border-color: #ebccd1;
+    border-bottom-color: transparent;
+}
+.tab-content{
+    position: relative;
+}
+
+.tab-content img {
+    width: calc(100%/20);
+    cursor: pointer;
+}
+
+.tab-content img:hover {
+    border: 3px solid #ffffff;
+}
+
+.button {
+    float: right!important;
+}
+.draw-inter{
+    clear: both;
+}
+.draw-inter button{
+    margin: 10px 0;
+}
+#mydraw{
+    position: absolute;
+    top: 1px;
+    left: 1px;
+}
+.canvas canvas {
+    float: left;
+}

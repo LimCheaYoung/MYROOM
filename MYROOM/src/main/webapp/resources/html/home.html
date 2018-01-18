@@ -1,0 +1,114 @@
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand logo" href="#"></a>
+                <a class="navbar-brand" href="#">
+                    	임채영
+                </a>
+                <a class="navbar-brand" href="#">
+                   		0포인트 
+                </a>
+                <a id="kakao-login-btn"></a>
+    			<a href="http://developers.kakao.com/logout"></a>
+    			<script type='text/javascript'>
+      //<![CDATA[
+        // 사용할 앱의 JavaScript 키를 설정해 주세요.
+        Kakao.init('e92886bf85b0dc084950d47fe7164b91');
+        // 카카오 로그인 버튼을 생성합니다.
+        Kakao.Auth.createLoginButton({
+          container: '#kakao-login-btn',
+          success: function(authObj) {
+            /* alert(JSON.stringify(authObj)); */
+            Kakao.API.request({
+                url: '/v1/user/me',
+                success: function(res) {
+                    var nickname = res.properties.nickname;
+                    var id = res.id;
+                    $.ajax({
+                        type: 'POST',
+                        url: 'back/user.php',
+                        data: {
+                            id: id,
+                            nickname: nickname
+                        },
+                        success: function() {
+                            location.href = '/';
+                        }
+                    })
+                },
+          },
+          fail: function(err) {
+             alert(JSON.stringify(err));
+          }
+        });
+      //]]>
+    </script>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <nav class="navbar mymenu">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myprofile">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> 
+                  </button>
+            </div>
+            <div class="collapse navbar-collapse" id="myprofile">
+                <ul class="nav navbar-nav nav-tabs">
+                    <li class="active"><a href="#">마이룸</a></li>
+                    <li><a href="#">상점</a></li>
+                    <li><a href="#">친구찾기</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="inBox">
+            <canvas id="myCanvas"></canvas>
+        </div>
+
+        <div class="inven">
+            <div class="panel with-nav-tabs panel-danger">
+                <div class="panel-heading">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-ng-href="" data-ng-click="tabEvent(1)">타일</a></li>
+                        <li><a data-ng-href="" data-ng-click="tabEvent(2)">가구</a></li>
+                        <li><a data-ng-href="" data-ng-click="tabEvent(3)">캐릭터</a></li>
+                        <li><a data-ng-href="" data-ng-click="tabEvent(4)">그리기</a></li>
+                        <li class="button">
+                            <button type="button" class="btn btn-danger set">편집 OFF</button>
+                            <div class="interface">
+                                <button type="button" class="btn btn-dange zoom-out">전체보기</button>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="tab1danger">
+                            <img src="resources/img/1.png">
+                        </div>
+                        <div class="tab-pane fade in" id="tab2danger">Danger 2</div>
+                        <div class="tab-pane fade in" id="tab3danger">Danger 3</div>
+                        <div class="tab-pane fade in" id="tab4danger">
+                            <div class="canvas">
+                                <canvas id="myline" width="100" height="100" style="border:1px solid #000000;"></canvas>
+                                <canvas id="mydraw" width="100" height="100"></canvas>
+                            </div>
+                            <div class="draw-inter">
+                                <button class="btn clear">초기화</button>
+                                <button class="btn">지우개</button>
+                                <button class="btn clear">저장</button>
+                                <div id="color-box-with-change-value"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
