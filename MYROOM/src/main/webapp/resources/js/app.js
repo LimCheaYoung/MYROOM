@@ -9,3 +9,6 @@ app.config(function($routeProvider){
 	}).otherwise({redirectTo: "/"});
 });
 
+app.run(function($rootScope, $http){
+
+});

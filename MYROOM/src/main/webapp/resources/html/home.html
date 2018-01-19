@@ -1,5 +1,4 @@
-
-    <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand logo" href="#"></a>
@@ -11,39 +10,6 @@
                 </a>
                 <a id="kakao-login-btn"></a>
     			<a href="http://developers.kakao.com/logout"></a>
-    			<script type='text/javascript'>
-      //<![CDATA[
-        // 사용할 앱의 JavaScript 키를 설정해 주세요.
-        Kakao.init('e92886bf85b0dc084950d47fe7164b91');
-        // 카카오 로그인 버튼을 생성합니다.
-        Kakao.Auth.createLoginButton({
-          container: '#kakao-login-btn',
-          success: function(authObj) {
-            /* alert(JSON.stringify(authObj)); */
-            Kakao.API.request({
-                url: '/v1/user/me',
-                success: function(res) {
-                    var nickname = res.properties.nickname;
-                    var id = res.id;
-                    $.ajax({
-                        type: 'POST',
-                        url: 'back/user.php',
-                        data: {
-                            id: id,
-                            nickname: nickname
-                        },
-                        success: function() {
-                            location.href = '/';
-                        }
-                    })
-                },
-          },
-          fail: function(err) {
-             alert(JSON.stringify(err));
-          }
-        });
-      //]]>
-    </script>
             </div>
         </div>
     </nav>
@@ -64,6 +30,8 @@
                 </ul>
             </div>
         </nav>
+       
+  
         <div class="inBox">
             <canvas id="myCanvas"></canvas>
         </div>

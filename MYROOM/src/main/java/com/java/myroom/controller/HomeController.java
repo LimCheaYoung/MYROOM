@@ -1,4 +1,4 @@
-package com.java.myroom;
+package com.java.myroom.controller;
 
 import java.text.DateFormat;
 import java.util.Date;

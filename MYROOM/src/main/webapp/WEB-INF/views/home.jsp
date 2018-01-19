@@ -18,9 +18,7 @@
 
 <script type="text/javascript" src="resources/angular/angular.min.js"></script>
 <script type="text/javascript" src="resources/angular/angular-route.min.js"></script>
-<!-- <script type="text/javascript" src="resources/js/draw.js"></script> -->
 <script type="text/javascript" src="resources/js/dx.all.js"></script>
-<!-- <script type="text/javascript" src="resources/js/index.js"></script> -->
 <script type="text/javascript" src="resources/js/app.js"></script>
 <script type="text/javascript" src="resources/js/myroom.js"></script>
 </head>

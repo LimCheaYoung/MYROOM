@@ -7,7 +7,7 @@
 	<!-- DataSource 생성 -->
 	<bean id="dataSourceSpied"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-		p:driverClassName="org.mariadb.jdbc.Driver" p:url="jdbc:mysql://localhost:3306/test"
+		p:driverClassName="org.mariadb.jdbc.Driver" p:url="jdbc:mysql://localhost:3306/myroom"
 		p:username="root" p:password="1234" />
 	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
 		<constructor-arg ref="dataSourceSpied" />

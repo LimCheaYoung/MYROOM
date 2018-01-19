@@ -3,15 +3,12 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="user">
-	<insert parameterType="hashmap" id="addUser"> 
-	insert into test (email, pw, name)
-		values (#{email}, #{pw}, #{name})
-		 </insert>
-	<select parameterType="hashmap" id="login" resultType="hashmap"> select *
-		from test where del_yn = 'N' and email = #{email} and pw = #{pw}
+	<select parameterType="hashmap" id="selectUser" resultType="hashmap"> 
+		select count(*)
+		from user where 카카오번호 = #{kkono}
 	</select>
-	<update parameterType="hashmap" id="upUser"> 
-	update test set email = #{email} ,pw = #{pw} ,name = #{name} where no = #{no} </update>
-	<update parameterType="hashmap" id="out"> update test set del_yn = 'Y'
-		where no = #{no} </update>
+	<insert parameterType="hashmap" id="addUser"> 
+	insert into user (카카오번호, 이름, 이메일)
+		values (#{kkono}, #{name}, #{email})
+	</insert>
 </mapper>

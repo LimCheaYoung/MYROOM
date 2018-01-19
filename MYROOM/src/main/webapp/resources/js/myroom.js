@@ -1,6 +1,43 @@
 // 앵귤라 모듈 만들기
 var app = angular.module("MyRoom", []);
-app.controller("myroom", function($scope){
+app.controller("myroom", function($scope, $http){
+	$scope.user = {
+			email : "",
+			name : "",
+			kkono : ""
+	};
+	$scope.kakao = function(){
+	    // 사용할 앱의 JavaScript 키를 설정해 주세요.
+        Kakao.init('e92886bf85b0dc084950d47fe7164b91');
+        // 카카오 로그인 버튼을 생성합니다.
+        Kakao.Auth.createLoginButton({
+          container: '#kakao-login-btn',
+          success: function(authObj) {
+            /* alert(JSON.stringify(authObj)); */
+              Kakao.API.request({
+                  url: '/v1/user/me',
+                  success: function(res) {
+                	$scope.user.email = res.kaccount_email;
+                	$scope.user.name = res.properties.nickname;
+                	$scope.user.kkono = res.id;
+                  	$scope.selectUser();                  	
+  	    		}
+              });
+          },
+	          fail: function(err) {
+	             /* alert(JSON.stringify(err)); */
+	          }
+        });
+	}
+	$scope.selectUser = function(){
+	      $http.post("selectUser", "", {params: $scope.user})
+	           .then(function(result){ // 성공하면 오는 곳
+	            console.log(result);
+	          }, function(result){ // 실패(오류) 하면 오는 곳
+	            console.log(result);
+	       });
+	   }
+	$scope.kakao();
 	$scope.myroom = function(){
 		var c = document.getElementById("myCanvas");
         //배경 
