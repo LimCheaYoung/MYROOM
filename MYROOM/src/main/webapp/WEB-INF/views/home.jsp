@@ -21,8 +21,12 @@
 <script type="text/javascript" src="resources/js/dx.all.js"></script>
 <script type="text/javascript" src="resources/js/app.js"></script>
 <script type="text/javascript" src="resources/js/myroom.js"></script>
+<script type="text/javascript" src="resources/js/friend.js"></script>
+<script type="text/javascript" src="resources/js/shop.js"></script>
 </head>
 <body>
-	<div data-ng-view></div>
+	<div data-ng-include="nav"></div>
+	<div class="container-fluid sbody" data-ng-view></div>
+	<footer class="text-center" data-ng-include="footer"></footer>
 </body>
 </html>

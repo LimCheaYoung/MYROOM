@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shop">
+	<select parameterType="hashmap" id="selectshop" resultType="hashmap"> 
+	  select 데이터 as data, 이름 as name, 템번호 as itemno, 가격 as price
+      from shop as s inner join item as i
+      on s.`템번호` = i.`번호`
+	</select>
+	<select parameterType="hashmap" id="searchshop" resultType="hashmap"> 
+      select 데이터 as data, 이름 as name, 템번호 as itemno, 가격 as price
+      from shop as s inner join item as i
+      on s.`템번호` = i.`번호`
+      where 이름 like '%${char}%'
+	</select>
+</mapper>

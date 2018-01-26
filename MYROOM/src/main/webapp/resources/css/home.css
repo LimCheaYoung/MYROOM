@@ -11,10 +11,14 @@ body {
 
 /*************************************************************/
 /*******상단********/
+.modal {
+   padding-top: 30%;
+}
 
 .navbar {
     background-color: rgb(64, 64, 64);
 }
+
 
 .navbar-right:nth-child(1)>li>a {
     font-family: 'Raleway', sans-serif;
@@ -35,7 +39,8 @@ body {
 }
 
 .navbar-brand:nth-child(2),
-.navbar-brand:nth-child(3) {
+.navbar-brand:nth-child(3),
+.navbar-brand:nth-child(4) {
     font-size: 12px;
     float: right;
 }
@@ -47,16 +52,27 @@ body {
     width: 100%;
     overflow: hidden;
     cursor: move;
+    position: relative;
 }
+#myCanvas {
+    -webkit-transform-origin: 10% 0;
+}
+
+#mysetline, #myhover{
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
 
 
 /*.inBox::-webkit-scrollbar {
     display: none;
 }*/
 
-canvas {
+/* canvas {
     -webkit-transform-origin: 10% 0;
-}
+} */
 
 .interface {
     margin-left: 5px;
@@ -125,8 +141,8 @@ canvas {
 }
 
 .tab-content img {
-    width: calc(100%/20);
-    cursor: pointer;
+    width: calc(100%/10);
+    cursor: pointer;    
 }
 
 .tab-content img:hover {
@@ -149,4 +165,79 @@ canvas {
 }
 .canvas canvas {
     float: left;
+}
+select {
+   height : 25px;
+}
+
+
+
+
+
+/*혁추가 footer를위한css*/
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+.sbody {
+    min-height: 100%;
+    position: relative;
+    padding-bottom: 40px;
+    /* footer height */
+}
+
+footer p span {
+    padding: 10px;
+}
+
+footer {
+    background-color: #72aef4;
+    color: #ffffff;
+    height: 40px;
+}
+
+/*친구검색창list*/
+
+.search {
+    margin-bottom: 40px;
+    height: 50px;
+}
+
+
+/*상점list*/
+.portfolio-item img {
+    width: 100px;
+    height: 100px;
+}
+.store{
+    border: 1px solid #ddd4d4;
+    width: 100%;
+    border-radius: 4px;
+    float: left;
+}
+.navbar-header{
+	height:100%;
+	height:50px;
+}
+
+@media only screen and (max-width:768px){
+    .store .portfolio-item{
+        width: calc(100% / 3);
+        float:left;
+    }
+}
+
+@media only screen and (max-width:500px){
+    .store .portfolio-item{
+        width: calc(100% / 2);
+        float:left;
+    }
+}
+.logout{
+	color : pink;
 }

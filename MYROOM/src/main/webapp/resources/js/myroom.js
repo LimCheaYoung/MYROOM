@@ -1,51 +1,142 @@
 // 앵귤라 모듈 만들기
 var app = angular.module("MyRoom", []);
-app.controller("myroom", function($scope, $http){
-	$scope.user = {
-			email : "",
-			name : "",
-			kkono : ""
+app.controller("myroom", function($rootScope,$scope, $http, LoginService){
+	LoginService.async().then(function(){
+		var result = LoginService.data();
+		console.log(result);
+		console.log("세션",result.data);
+  	   if(result.data.status == 0){
+  		  $rootScope.loginbool = false;
+  	   }else if(result.data.status == 1){
+  		  $rootScope.user = result.data.user;
+  		  $rootScope.loginbool = true;
+  		  $scope.selectRoom();
+  	   }
+	});
+	$scope.selectRoom = function(){
+		console.log("room시작전", $rootScope.loginbool);
+		if($rootScope.loginbool){
+			console.log("room실행됨", $rootScope.loginbool);
+			$http.post("selectRoom", "", {params: $rootScope.user})
+	           .then(function(result){ // 성공하면 오는 곳
+	        	   $scope.data = result.data.result;
+	        	   $scope.inven.data = result.data.inven;
+	        	   $rootScope.user.point = result.data.point.point;
+	        	   $scope.myroom();
+	          }, function(result){ // 실패(오류) 하면 오는 곳
+	            console.log(result);
+	       });
+		}
+	}
+
+	$scope.data = {};
+	$scope.item = {
 	};
-	$scope.kakao = function(){
+	$scope.inven = {
+			data : []
+	};
+	$scope.tabActive = 0; 
+	$rootScope.kakao = function(){
 	    // 사용할 앱의 JavaScript 키를 설정해 주세요.
         Kakao.init('e92886bf85b0dc084950d47fe7164b91');
-        // 카카오 로그인 버튼을 생성합니다.
-        Kakao.Auth.createLoginButton({
-          container: '#kakao-login-btn',
+        Kakao.Auth.login({
           success: function(authObj) {
-            /* alert(JSON.stringify(authObj)); */
               Kakao.API.request({
                   url: '/v1/user/me',
                   success: function(res) {
-                	$scope.user.email = res.kaccount_email;
-                	$scope.user.name = res.properties.nickname;
-                	$scope.user.kkono = res.id;
-                  	$scope.selectUser();                  	
+                 	$rootScope.user.email = res.kaccount_email;
+                	$rootScope.user.name = res.properties.nickname;
+                	$rootScope.user.kkono = res.id;
+            		$scope.item.kkono = res.id;
+            		$scope.inven.kkono = res.id;
+            		$rootScope.loginbool = true;
+            		console.log("login",$rootScope.user);
+            		$scope.selectRoom();
   	    		}
               });
           },
 	          fail: function(err) {
-	             /* alert(JSON.stringify(err)); */
+	             alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 	          }
         });
 	}
-	$scope.selectUser = function(){
-	      $http.post("selectUser", "", {params: $scope.user})
-	           .then(function(result){ // 성공하면 오는 곳
-	            console.log(result);
-	          }, function(result){ // 실패(오류) 하면 오는 곳
-	            console.log(result);
-	       });
-	   }
-	$scope.kakao();
+	
+	$scope.additem = function(){
+		if($("#type").val() == "타일"){
+			$scope.item.type = 1;
+		}else if($("#type").val() == "가구"){
+			$scope.item.type = 2;
+		}
+		
+		if($scope.item.name == ""){
+			alert("이름을 입력해주세요.");
+			return false;
+		}
+		
+		if($scope.item.name.length > 11){
+			alert("10자리 이내의 이름으로 입력해주세요.");
+			return false;
+		}
+		
+		$http.post("additem", "", {params: $scope.item})
+           .then(function(result){ // 성공하면 오는 곳
+        	if(result.data.msg){
+        		alert(result.data.msg);
+        	} else {
+        		alert("정상으로 저장 되었습니다.");
+        	}
+          }, function(result){ // 실패(오류) 하면 오는 곳
+        	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
+       });           
+	}
+	
+	$scope.addshop = function(){
+		if($scope.item.price == ""){
+			alert("가격을 입력해주세요.");
+			return false;
+		}
+		
+		if($scope.item.price.length > 11){
+			alert("11자리 이내의 가격으로 입력해주세요.");
+			return false;
+		}
+		
+		$http.post("addshop", "", {params: $scope.item})
+	        .then(function(result){ // 성공하면 오는 곳
+	     	if(result.data.msg){
+	     		alert(result.data.msg);
+	     	} else {
+	     		alert("정상으로 저장 되었습니다.");
+	     	}
+	       }, function(result){ // 실패(오류) 하면 오는 곳
+	     	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
+	    });
+	}
+	$scope.selectinven = function(index){
+		$scope.inven.type = index;
+		$http.post("selectinven", "", {params: $scope.inven})
+        .then(function(result){ // 성공하면 오는 곳
+	     	if(result.data.msg){
+	     		alert(result.data.msg);
+	     	} else {
+	     		$scope.inven.data = result.data.inven;
+	     		console.log($scope.inven);
+	     	}
+       }, function(result){ // 실패(오류) 하면 오는 곳
+     	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
+    });
+	}
+	
 	$scope.myroom = function(){
-		var c = document.getElementById("myCanvas");
+		var myroom = document.getElementById("myCanvas");
+		var mysetline = document.getElementById("mysetline");
+		var myhover = document.getElementById("myhover");
         //배경 
-        var background = c.getContext("2d");
+        var background = myroom.getContext("2d");
         //편집 
-        var myinterface = c.getContext("2d");
+        var myinterface = mysetline.getContext("2d");
         //캐릭터
-        var character = c.getContext("2d");
+        var character = mysetline.getContext("2d");
 
         //캔버스 가로
         var wd;
@@ -58,20 +149,24 @@ app.controller("myroom", function($scope, $http){
         //편집모드
         var set = false;
         var src;
+        //아이템번호
+        var itemno = 0;
         //스크롤
         var scrollx;
         var scrolly;
         //타일(배경)
-        var $tile = [
-              1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1
-          ];
+        var $tile = $scope.data.tile.split(" ");
 
         //마우스가 클릭할 때
-        c.addEventListener("mousedown", mousedown, false);
-        //마우스가 움직일 때
-        c.addEventListener("mousemove", mousemove, false);
-        //마우스를 뗄 때
-        c.addEventListener("mouseup", mouseup, false);
+        $("canvas").on("mousedown", function () {
+            mousedown();
+        });
+        $("canvas").on("mousemove", function () {
+            mousemove();
+        });
+        $("canvas").on("mouseup", function (event) {
+            mouseup(event);
+        });
 
 
         function mousedown() {
@@ -105,40 +200,40 @@ app.controller("myroom", function($scope, $http){
 
             }
         }
-        //편집모드 가이드 
-        function pixel(x, y) {
-            var px = x - (x % (wd / 64));
-            var py = y - (y % (wd / 64));
-            //임의지정숫자
-            $tile[(py / (wd / 64)) * 64 + px / (wd / 64)] = 1;
-            room();
-            setline();
-
-        }
 
         //기본 룸 설정
-        function room() {
+        $scope.room = function() {
             $(".inBox").height($(".inBox").width() / 5 * 2.2 + "px");
             $("#myCanvas").attr("width", 100 * 64 + "px");
             $("#myCanvas").attr("height", 100 * 64 + "px");
+            $("#myhover").attr("width", 100 * 64 + "px");
+            $("#myhover").attr("height", 100 * 64 + "px");
+            $("#mysetline").attr("width", 100 * 64 + "px");
+            $("#mysetline").attr("height", 100 * 64 + "px");
             wd = $("#myCanvas").width();
             hd = $("#myCanvas").height();
-
+        	
             $.each($tile, function (index, value) {
                 var y = (index - (index % 64)) / 64;
                 var x = (index - (y * 64));
-                if ($tile[index] != 0) {
-                    var image = new Image();
-                    image.src = "resources/img/" + value + ".png";
-                    background.drawImage(image, x * (wd / 64), y * (wd / 64), wd / 64, wd / 64);
+                
+                if (value != 0) {
+                	$.each($scope.inven.data, function (i, result) {
+        	     		if(result.itemno == value){
+        	     			var image = new Image();
+                            image.src = result.data;
+                            background.drawImage(image, x * (wd / 64), y * (wd / 64), result.wd, result.hd);
+        	     		}  
+                    });
                 }
+                
             });
         }
-        room();
+        $scope.room();
 
         //창 크기 조절시 px 다시 설정하고 다시 그리기
         $(window).resize(function () {
-            room();
+        	$scope.room();
         });
 
 
@@ -156,24 +251,32 @@ app.controller("myroom", function($scope, $http){
                 $(".set").text("편집 OFF");
                 $(".tab-content img").css("border", "none");
                 $("#myCanvas").css("cursor", "move");
-                room();
+                $scope.room();
                 $(".zoom-out").text("원래대로");
 
             }
 
         });
 
-        $(".tab-content img").on("mousedown", function () {
-            src = $(this).attr("src");
+        $scope.imgivent = function(index) {
+        	itemno = $scope.inven.data[index].itemno;
             $(".tab-content img").css("border", "none");
-            $(this).css("border", "3px solid #ffffff");
+            $(".tab-content img").eq(index).css("border", "3px solid #ffffff");
             if (!set) {
                 set = true;
                 $(".set").text("편집 ON");
                 setline();
-                $("#myCanvas").css("cursor", "pointer");
+                $("#myCanvas").css("cursor", "pointer");   
             }
-        });
+        }
+        
+        //편집모드 가이드 
+        function pixel(x, y) {
+            var px = x - (x % (wd / 64));
+            var py = y - (y % (wd / 64));
+            $tile[(py / (wd / 64)) * 64 + px / (wd / 64)] = itemno;
+            $scope.room();
+        }
 
 
         $(".set").click(function () {
@@ -187,20 +290,24 @@ app.controller("myroom", function($scope, $http){
                 $(".set").text("편집 OFF");
                 $(".tab-content img").css("border", "none");
                 $("#myCanvas").css("cursor", "move");
-                room();
+                myinterface.beginPath();
+                myinterface.translate(-0.5, -0.5);
+                myinterface.clearRect(0,0,wd,hd);
+                myinterface.closePath();
             }
         });
 
         function setline() {
-            myinterface.translate(0.5, 0.5);
-            myinterface.strokeStyle = 'black';
+        	myinterface.beginPath();
+        	myinterface.translate(0.5, 0.5);
             for (var j = wd / 64; j <= wd; j = j + wd / 64) {
-          	  myinterface.moveTo(j, 0);
-          	  myinterface.lineTo(j, wd);
-          	  myinterface.moveTo(0, j);
-          	  myinterface.lineTo(wd, j);
+            	myinterface.moveTo(j, 0);
+                myinterface.lineTo(j, wd);
+                myinterface.moveTo(0, j);
+                myinterface.lineTo(wd, j);
             }
             myinterface.stroke();
+            myinterface.closePath();
         }
 	}
 	
@@ -213,20 +320,24 @@ app.controller("myroom", function($scope, $http){
 	    var draw = canvas2.getContext("2d");
 	    //그리기 모드 false
 	    var drawbool = false;
+	    var eraserbool = false;
+	    var eraser = false;
 	    //마우스 x / y 선언
 	    var preX, preY;
 	    //캔버스 가로
-	    var wd;
+	    var wd = $("#myline").attr("width");
 	    //캔버스 새로
-	    var hd;
+	    var hd = $("#myline").attr("height");
 
 	    function drawline() {
 	        line.translate(0.5, 0.5);
-	        for (var j = 10; j <= 100; j = j + 10) {
-	            line.moveTo(j, 0);
-	            line.lineTo(j, 100);
-	            line.moveTo(0, j);
-	            line.lineTo(100, j);
+	        for (var j = 10; j <= wd; j = j + 10) {
+		        for (var i = 10; i <= hd; i = i + 10) {
+		            line.moveTo(j, 0);
+		            line.lineTo(j, hd);
+		            line.moveTo(0, i);
+		            line.lineTo(wd, i);
+		        }
 	        }
 	        line.stroke();
 	    }
@@ -241,33 +352,42 @@ app.controller("myroom", function($scope, $http){
 
 	    //마우스가 왼쪽 클릭할 때
 	    function mousedown(event) {
-	        //console.log(event.offsetX, " ", event.offsetY);
-	        //그리고 모드 true
-	        drawbool = true;
-	        //page는 브라우저 좌표 기준 , offset는 캔버스 좌표 기준
-	        //캔버스 기준
-	        preX = event.offsetX;
-	        preY = event.offsetY;
-	        pixel(preX, preY);
+	       if(eraser != true){
+		        //캔버스 기준
+	    	    drawbool = true;
+		        preX = event.offsetX;
+		        preY = event.offsetY;
+		        pixel(preX, preY);
+	       }else if(eraser){
+	    	   eraserbool = true;
+	    	   preX = event.offsetX;
+		       preY = event.offsetY;
+		       cleanpixel(preX, preY);
+	       }
+
 	    }
 	    //마우스가 왼쪽 버튼을 땔 때 
 	    function mouseup(event) {
 	        //그리기 모드 false
 	        drawbool = false;
-	        console.log(canvas2.toDataURL());
+	        eraserbool = false;
 	    }
 	    //마우스가 움직일 때
 	    function mousemove(event) {
 	        //그리기모드 온일 때 마우스가 움직이면
-	        if (drawbool == true) {
+	    	if (drawbool == true) {
 	            preX = event.offsetX;
 	            preY = event.offsetY;
 	            pixel(preX, preY);
 	/*            var myImage = document.getElementById('exdraw');*/
 	           /* myImage.src = */
-	            
+	        }else if(eraserbool == true){
+	            preX = event.offsetX;
+	            preY = event.offsetY;
+	            cleanpixel(preX, preY);
 	        }
 	    }
+	    
 
 	    function pixel(x, y) {
 	        var px = x - (x % 10);
@@ -275,11 +395,28 @@ app.controller("myroom", function($scope, $http){
 	        draw.fillStyle = $(".dx-texteditor-input").val();
 	        draw.fillRect(px, py, 10, 10);
 	    }
+	    function cleanpixel(x, y) {
+	        var px = x - (x % 10);
+	        var py = y - (y % 10);
+	        draw.clearRect(px, py, 10, 10);
+	    }
 
 	    $(".clear").click(function () {
-
+	    	drawbool = false;
+	        eraserbool = false;
+	    	draw.clearRect(0,0,wd,hd);
 	    });
-	    
+	    $(".eraser").click(function () {
+	    	eraser = true;
+	    });
+	    $(".pen").click(function () {
+	    	eraser = false;
+	    });
+	    $(".save").click(function(){
+	    	$scope.item.data = canvas2.toDataURL();
+	    	$scope.item.wd = wd;
+	    	$scope.item.hd = hd;
+	    });
 	    $("#color-box-with-change-value").dxColorBox({
 	    	height:"50px",
 	        width : "200px",
@@ -292,18 +429,36 @@ app.controller("myroom", function($scope, $http){
 	            $(".color-block").css("background-color", e.event.target.value);
 	        }
 	    });
+	    $('#width').click(function(){
+	    	var imgData=draw.getImageData(0,0,wd,hd);   	
+	    	$('#myline').attr("width",100 * $('#width').val());
+	    	$('#mydraw').attr("width",100 * $('#width').val());
+	    	draw.putImageData(imgData,0,0);
+	    	wd = $("#myline").attr("width");
+	    	drawline();
+	    });
+	    
+	    $('#height').click(function(){
+	    	var imgData=draw.getImageData(0,0,wd,hd);  
+	    	$('#myline').attr("height",100 * $('#height').val());
+	    	$('#mydraw').attr("height",100 * $('#height').val());
+	    	draw.putImageData(imgData,0,0);
+	    	hd = $("#myline").attr("height");
+	    	drawline();
+	    });
 	}
 	
 	$scope.tabEvent = function(index){
-		$(".inven .nav li").removeClass("active");
-		$(".tab-content .tab-pane").removeClass("active");
-		$(".inven .nav li").eq(index - 1).addClass("active");
-		$(".tab-content .tab-pane").eq(index - 1).addClass("active");
+		$scope.tabActive = index;
+		if(index < 2){
+			$scope.selectinven(index + 1);
+		}
 	}
 	
+	
 	setTimeout(function(){
-		$scope.myroom();
 		$scope.draw();
 	}, 100);
+	
 	
 });
