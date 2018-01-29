@@ -23,6 +23,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	        	   $scope.inven.data = result.data.inven;
 	        	   $rootScope.user.point = result.data.point.point;
 	        	   $scope.myroom();
+	        	   console.log($scope.inven.data);
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	       });
@@ -113,8 +114,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	    });
 	}
 	$scope.selectinven = function(index){
-		$scope.inven.type = index;
-		$http.post("selectinven", "", {params: $scope.inven})
+		$http.post("selectinven", "", {params: $scope.user})
         .then(function(result){ // 성공하면 오는 곳
 	     	if(result.data.msg){
 	     		alert(result.data.msg);
@@ -126,7 +126,6 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
      	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
     });
 	}
-	
 	$scope.myroom = function(){
 		var myroom = document.getElementById("myCanvas");
 		var mysetline = document.getElementById("mysetline");
@@ -149,6 +148,9 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         //편집모드
         var set = false;
         var src;
+        var tilewd;
+        var tilehd;
+        var type;
         //아이템번호
         var itemno = 0;
         //스크롤
@@ -156,6 +158,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         var scrolly;
         //타일(배경)
         var $tile = $scope.data.tile.split(" ");
+        var $object = $scope.data.object.split(" ");
 
         //마우스가 클릭할 때
         $("canvas").on("mousedown", function () {
@@ -183,7 +186,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
                     x: event.offsetX,
                     y: event.offsetY
                 }
-                pixel(mouse.x, mouse.y);
+                tiledraw(mouse.x, mouse.y);
             }
             move = false;
         }
@@ -200,7 +203,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 
             }
         }
-
+        
         //기본 룸 설정
         $scope.room = function() {
             $(".inBox").height($(".inBox").width() / 5 * 2.2 + "px");
@@ -230,13 +233,6 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
             });
         }
         $scope.room();
-
-        //창 크기 조절시 px 다시 설정하고 다시 그리기
-        $(window).resize(function () {
-        	$scope.room();
-        });
-
-
         $(".zoom-out").click(function () {
             if (zoomout) {
                 zoomout = false;
@@ -260,8 +256,10 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 
         $scope.imgivent = function(index) {
         	itemno = $scope.inven.data[index].itemno;
-            $(".tab-content img").css("border", "none");
-            $(".tab-content img").eq(index).css("border", "3px solid #ffffff");
+        	src = $scope.inven.data[index].data;
+        	type = $scope.inven.data[index].type;
+        	tilewd = $scope.inven.data[index].wd;
+        	tilehd = $scope.inven.data[index].hd;
             if (!set) {
                 set = true;
                 $(".set").text("편집 ON");
@@ -271,11 +269,16 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         }
         
         //편집모드 가이드 
-        function pixel(x, y) {
+        function tiledraw(x, y) {
             var px = x - (x % (wd / 64));
             var py = y - (y % (wd / 64));
             $tile[(py / (wd / 64)) * 64 + px / (wd / 64)] = itemno;
-            $scope.room();
+            var image = new Image();
+            image.src = src;
+            if(type == 1){
+            	background.clearRect(px, py, tilewd, tilehd);
+            }
+            background.drawImage(image, px, py, tilewd, tilehd);
         }
 
 
@@ -294,9 +297,21 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
                 myinterface.translate(-0.5, -0.5);
                 myinterface.clearRect(0,0,wd,hd);
                 myinterface.closePath();
+                var update = "";
+                $.each($tile, function (index, value) {
+                	update += value + " ";
+                	
+                });
+               $http.post("uptile", "", {params: {tile : update, kkono : $rootScope.user.kkono}})
+ 	           .then(function(result){ // 성공하면 오는 곳
+ 	        	   console.log(result);
+	 	          }, function(result){ // 실패(오류) 하면 오는 곳
+	 	            console.log(result);
+	 	       });
             }
         });
 
+        
         function setline() {
         	myinterface.beginPath();
         	myinterface.translate(0.5, 0.5);
@@ -450,9 +465,6 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	
 	$scope.tabEvent = function(index){
 		$scope.tabActive = index;
-		if(index < 2){
-			$scope.selectinven(index + 1);
-		}
 	}
 	
 	

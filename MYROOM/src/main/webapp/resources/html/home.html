@@ -25,10 +25,10 @@
                 <div class="panel-body">
                     <div class="tab-content">
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 0}" id="tab1danger" >
-                            <img data-ng-repeat="rows in inven.data" data-ng-src="{{rows.data}}" data-ng-click="imgivent($index)">
+                            <img data-ng-repeat="rows in inven.data" data-ng-src="{{rows.data}}" data-ng-if="rows.type == 1" data-ng-click="imgivent($index)">
                         </div>
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 1}" id="tab2danger">
-                        	<img data-ng-repeat="rows in inven.data" data-ng-src="{{rows.data}}" data-ng-click="imgivent()">
+                        	<img data-ng-repeat="rows in inven.data" data-ng-src="{{rows.data}}" data-ng-if="rows.type == 2" data-ng-click="imgivent()">
                         </div>
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 2}" id="tab3danger">Danger 3</div>
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 3}" id="tab4danger">

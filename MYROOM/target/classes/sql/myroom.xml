@@ -14,7 +14,7 @@
 		where 유저번호 = #{kkono}
 	</update>
 	<select parameterType="hashmap" id="selectinven" resultType="hashmap"> 
-      select item.`번호` as no, item.`높이` as hd,item.`가로` as wd, item.`이름` as name, item.`데이터` as data, item.`번호` as itemno
+      select item.`타입` as type, item.`높이` as hd,item.`가로` as wd, item.`이름` as name, item.`데이터` as data, item.`번호` as itemno
       from inven inner join item
 	  on inven.`템번호` = item.`번호`  
 	  where item.`유저번호` = #{kkono}

@@ -19,7 +19,18 @@ public class MyroomService implements MyroomServiceInterface {
 	@Override
 	public HashMap<String, Object> uptile(HashMap<String, Object> param) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		result.put("status", mdi.uptile(param));
+		int status = mdi.uptile(param);
+		if(status == 1) {
+			status = mdi.upobject(param);
+			if(status == 1) {
+				result.put("msg", "저장되었습니다.");
+			}else {
+				result.put("msg", "저장과정에서 문제가 발생하였습니다.");
+			
+			}
+		}else {
+			result.put("msg", "저장과정에서 문제가 발생하였습니다.");
+		}
 		return result;
 	}
 

@@ -32,6 +32,12 @@ public class ShopService implements ShopServiceInterface {
 		return result;
 	}
 
+	@Override
+	public HashMap<String, Object> shop(HashMap<String, Object> param) {
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		result.put("result", sdi.selectshop());
+		return result;
+	}
 	
 	
 }
