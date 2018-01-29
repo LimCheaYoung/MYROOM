@@ -54,11 +54,11 @@ body {
     cursor: move;
     position: relative;
 }
-#myCanvas {
+#myCanvas, #myobject {
     -webkit-transform-origin: 10% 0;
 }
 
-#mysetline, #myhover{
+#mysetline, #myhover, #myobject{
     position: absolute;
     left: 0;
     top: 0;
@@ -240,4 +240,8 @@ footer {
 }
 .logout{
 	color : pink;
+}
+.cvs{
+    overflow-x: auto;
+    position: relative;
 }

@@ -15,6 +15,8 @@ import com.java.myroom.util.HttpUtil;
 public class MyroomService implements MyroomServiceInterface {
 	@Autowired
 	MyroomDaoInterface mdi;
+	@Autowired
+	FileServiceInterface fsi;
 
 	@Override
 	public HashMap<String, Object> uptile(HashMap<String, Object> param) {
@@ -26,7 +28,6 @@ public class MyroomService implements MyroomServiceInterface {
 				result.put("msg", "저장되었습니다.");
 			}else {
 				result.put("msg", "저장과정에서 문제가 발생하였습니다.");
-			
 			}
 		}else {
 			result.put("msg", "저장과정에서 문제가 발생하였습니다.");
@@ -34,13 +35,6 @@ public class MyroomService implements MyroomServiceInterface {
 		return result;
 	}
 
-	@Override
-	public HashMap<String, Object> upobject(HashMap<String, Object> param) {
-		HashMap<String, Object> result = new HashMap<String, Object>();
-		result.put("status", mdi.upobject(param));
-		return result;
-	}
-	
 	
 	@Override
 	public HashMap<String, Object> addinven(HashMap<String, Object> param) {
@@ -51,39 +45,39 @@ public class MyroomService implements MyroomServiceInterface {
 		}else {
 			result.put("msg", "구매과정에서 문제가 발생하였습니다.");
 		}
-		
 		return result;
 	}
 
 	@Override
-	public HashMap<String, Object> additem(HashMap<String, Object> param) {
+	public HashMap<String, Object> additem(HashMap<String, Object> param) throws Exception{
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		result = mdi.selectitem(param);
 		
-		if(Integer.parseInt(result.get("count").toString()) == 1) {
-			result.put("msg", "이미 있는 타일 또는 가구입니다.");
-		} else {
+		if(Integer.parseInt(result.get("count").toString()) != 0) {
+			result.put("msg", "이미 이름입니다.");
+		}else {
 			int status = mdi.additem(param);
+			result = mdi.selectitem(param);
 			if(status == 1) {
-				result = mdi.selectitem(param);
 				param.put("itemno", result.get("itemno"));	
 				status = mdi.addinven(param);
 				if(status != 1) {
 					result.put("msg", "예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 				}else {
+					fsi.Fileupload(param.get("data").toString(), param.get("itemno").toString());
 					return param;
 				}
 			} else {
 				result.put("msg", "예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 			}
 		}
-		
+
 		return result;
 	}
 
 
 	@Override
-	public HashMap<String, Object> addshop(HashMap<String, Object> param) {
+	public HashMap<String, Object> addshop(HashMap<String, Object> param) throws Exception {
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		result = additem(param);
 		if(result.containsKey("msg")) {

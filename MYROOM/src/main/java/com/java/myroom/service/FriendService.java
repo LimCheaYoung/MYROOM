@@ -16,6 +16,8 @@ import com.java.myroom.util.HttpUtil;
 public class FriendService implements FriendServiceInterface {
 	@Autowired
 	FriendDaoInterface fdi;
+	@Autowired
+	MyroomDaoInterface mdi;
 
 	@Override
 	public HashMap<String, Object> selectbest() {
@@ -27,7 +29,8 @@ public class FriendService implements FriendServiceInterface {
 	@Override
 	public HashMap<String, Object> findroom(HashMap<String, Object> param) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		result.put("result", fdi.findroom(param));
+		result.put("data", fdi.findroom(param));
+		result.put("inven", mdi.selectinven(param));
 		return result;
 	}
 

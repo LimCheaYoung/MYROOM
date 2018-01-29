@@ -29,5 +29,9 @@ public class ShopController {
 	public ModelAndView searchshop(HttpServletRequest req){
 		return HttpUtil.returnJson(ssi.searchshop(HttpUtil.paramMap(req)));
 	}
+	@RequestMapping(value = "/addpoint", method = RequestMethod.POST)
+	public ModelAndView addpoint(HttpServletRequest req){
+		return HttpUtil.returnJson(ssi.addpoint(HttpUtil.paramMap(req)));
+	}
 
 }

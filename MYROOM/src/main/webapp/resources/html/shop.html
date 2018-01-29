@@ -12,9 +12,9 @@
              </div>
          </div>
          <div class="col-md-2 col-sm-2 portfolio-item" data-ng-repeat="rows in shop">
-             <img data-ng-src="{{rows.data}}">
+             <img data-ng-src="{{rows.data + 'png'}}">
              <p>{{rows.name}}</p>
-             <p>{{rows.price}}포인트<button class="btn btn-success">구매</button></p>
+             <p>{{rows.price}}포인트<button class="btn btn-success" data-ng-click="additem($index)">구매</button></p>
          </div>
         
      </div>

@@ -14,14 +14,19 @@
 		where 유저번호 = #{kkono}
 	</update>
 	<select parameterType="hashmap" id="selectinven" resultType="hashmap"> 
-      select item.`타입` as type, item.`높이` as hd,item.`가로` as wd, item.`이름` as name, item.`데이터` as data, item.`번호` as itemno
+      select item.`타입` as type, item.`높이` as hd,item.`가로` as wd, item.`이름` as name, item.`번호` as itemno
       from inven inner join item
 	  on inven.`템번호` = item.`번호`  
 	  where item.`유저번호` = #{kkono}
 	</select>
+	<select parameterType="hashmap" id="selectitem" resultType="hashmap"> 
+      select item.`번호` as itemno, count(*) as count
+      from item
+	  where item.`이름` = #{name}
+	</select>
 	<insert parameterType="hashmap" id="additem"> 
-	insert into item(이름, 높이, 가로, 데이터, 타입, 유저번호)
-		values (#{name}, #{wd}, #{hd}, #{data}, #{type}, #{kkono})
+	insert into item(이름, 높이, 가로, 타입, 유저번호)
+		values (#{name}, #{wd}, #{hd}, #{type}, #{kkono})
 	</insert>
 	<insert parameterType="hashmap" id="addinven"> 
 	insert into inven(템번호, 유저번호)
@@ -31,5 +36,4 @@
 	insert into shop(템번호, 가격)
 		values (#{itemno},#{price})
 	</insert>
-	
 </mapper>

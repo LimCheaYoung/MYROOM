@@ -17,6 +17,8 @@ import com.java.myroom.util.HttpUtil;
 public class ShopService implements ShopServiceInterface {
 	@Autowired
 	ShopDaoInterface sdi;
+	@Autowired
+	MyroomServiceInterface msi;
 
 	@Override
 	public HashMap<String, Object> selectshop() {
@@ -33,9 +35,24 @@ public class ShopService implements ShopServiceInterface {
 	}
 
 	@Override
-	public HashMap<String, Object> shop(HashMap<String, Object> param) {
-		HashMap<String, Object> result = new HashMap<String, Object>();
-		result.put("result", sdi.selectshop());
+	public HashMap<String, Object> addpoint(HashMap<String, Object> param) {
+		System.out.println(param);
+		HashMap<String, Object> result = sdi.selectpoint(param);
+		int point = Integer.parseInt(result.get("point").toString());
+		int price = Integer.parseInt(param.get("price").toString());
+		if( point < price ) {
+			result.put("msg", "보유하신 포인트가 부족합니다.");
+		}else {
+			int status = sdi.uppoint2(param);
+			if(status == 1) {
+				status = sdi.uppoint(param);
+				if(status == 1) {
+					result = msi.addinven(param);
+				}
+			}else {
+				result.put("msg", "구매과정에서 문제가 발생하였습니다.");
+			}
+		}
 		return result;
 	}
 	

@@ -13,9 +13,10 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
   		  $scope.selectBest();
   	   }
 	});
-	$scope.friend={
-			
-	}
+	$scope.friend={};
+	$scope.data={};
+	$scope.inven={};
+	$scope.roomon=false;
 	$scope.selectBest = function(){
 	      $http.post("selectbest", "")
 	           .then(function(result){ // 성공하면 오는 곳
@@ -34,5 +35,45 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	            console.log(result);
 	   });
 	}
-	
+	$scope.room = function(index){
+	      $http.post("findroom", "", {params: $scope.friend[index]})
+          .then(function(result){ // 성공하면 오는 곳
+        	  $scope.roomon=true;
+        	  $scope.data = result.data.data;
+        	  $scope.inven = result.data.inven;
+         }, function(result){ // 실패(오류) 하면 오는 곳
+           console.log(result);
+         });
+	}
+	$scope.myroom = function(){
+		var myroom = document.getElementById("myCanvas");
+		var background = myroom.getContext("2d");
+		var wd;
+		var hd;
+		var $tile = $scope.data.tile;
+		//기본 룸 설정
+        $scope.room = function() {
+            $(".inBox").height($(".inBox").width() / 5 * 2.2 + "px");
+            $("#myCanvas").attr("width", 100 * 64 + "px");
+            $("#myCanvas").attr("height", 100 * 64 + "px");
+            wd = $("#myCanvas").width();
+            hd = $("#myCanvas").height();
+        	
+            $.each($tile, function (index, value) {
+                var y = (index - (index % 64)) / 64;
+                var x = (index - (y * 64));
+                
+                if (value != 0) {
+                	$.each($scope.inven, function (i, result) {
+        	     		if(result.itemno == value){
+        	     			var image = new Image();
+                            image.src = itemno + ".png";
+                            background.drawImage(image, x * (wd / 64), y * (wd / 64), result.wd, result.hd);
+        	     		}
+                    });
+                }
+                
+            });
+        }
+	}
 });

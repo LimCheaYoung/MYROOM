@@ -4,29 +4,29 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="shop">
 	<select parameterType="hashmap" id="selectshop" resultType="hashmap"> 
-	  select 데이터 as data, 이름 as name, 템번호 as itemno, 가격 as price
+	  select 이름 as name, 템번호 as itemno, 타입 as type, 가격 as price, 유저번호 as kkono
       from shop as s inner join item as i
       on s.`템번호` = i.`번호`
 	</select>
 	<select parameterType="hashmap" id="selectpoint" resultType="hashmap"> 
-	  select point
+	  select 포인트 as point
       from user
       where 카카오번호 = #{kkono}
 	</select>
 	<select parameterType="hashmap" id="searchshop" resultType="hashmap"> 
-      select 데이터 as data, 이름 as name, 템번호 as itemno, 가격 as price
+      select 이름 as name, 템번호 as itemno, 타입 as type, 가격 as price, 유저번호 as kkono
       from shop as s inner join item as i
       on s.`템번호` = i.`번호`
       where 이름 like '%${char}%'
 	</select>
 	<update parameterType="hashmap" id="uppoint"> 
-		update room
-		set 포인트 = (포인트 + ${price})
-		where 유저번호 = #{kkono}
+		update user
+		set 포인트 = (포인트 - ${price})
+		where 카카오번호 = #{kkono}
 	</update>
 	<update parameterType="hashmap" id="uppoint2"> 
-		update room
-		set 포인트 = (포인트 - ${price})
-		where 유저번호 = #{kkono}
+		update user
+		set 포인트 = (포인트 + ${price})
+		where 카카오번호 = #{kkono2}
 	</update>
 </mapper>

@@ -23,12 +23,8 @@ public class MyroomController {
 	public ModelAndView uptile(HttpServletRequest req){
 		return HttpUtil.returnJson(msi.uptile(HttpUtil.paramMap(req)));
 	}
-	@RequestMapping(value = "/upobject", method = RequestMethod.POST)
-	public ModelAndView upobject(HttpServletRequest req){
-		return HttpUtil.returnJson(msi.upobject(HttpUtil.paramMap(req)));
-	}
 	@RequestMapping(value = "/additem", method = RequestMethod.POST)
-	public ModelAndView additem(HttpServletRequest req){
+	public ModelAndView additem(HttpServletRequest req) throws Exception{
 		return HttpUtil.returnJson(msi.additem(HttpUtil.paramMap(req)));
 	}
 	@RequestMapping(value = "/addinven", method = RequestMethod.POST)
@@ -36,7 +32,7 @@ public class MyroomController {
 		return HttpUtil.returnJson(msi.addinven(HttpUtil.paramMap(req)));
 	}
 	@RequestMapping(value = "/addshop", method = RequestMethod.POST)
-	public ModelAndView addUser(HttpServletRequest req){
+	public ModelAndView addUser(HttpServletRequest req) throws Exception{
 		return HttpUtil.returnJson(msi.addshop(HttpUtil.paramMap(req)));
 	}
 	

@@ -14,7 +14,8 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
   	   }
 	});
 	$scope.shop={
-			
+	}
+	$scope.data={
 	}
 	$scope.selectshop = function(){
 	      $http.post("selectshop", "")
@@ -34,4 +35,19 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
 	   });
 	}
 	
+	$scope.additem = function(index){
+		$scope.data.kkono = $rootScope.user.kkono;
+		$scope.data.kkono2 = $scope.shop[index].kkono;
+		$scope.data.price = $scope.shop[index].price;
+		$scope.data.itemno = $scope.shop[index].itemno;
+		console.log($scope.data);
+        $http.post("addpoint", "", {params: $scope.data})
+         .then(function(result){ // 성공하면 오는 곳
+	         	if(result.data.msg){
+	        		alert(result.data.msg);
+	        	}
+	          }, function(result){ // 실패(오류) 하면 오는 곳
+	            console.log(result);
+	       });
+	}
 });

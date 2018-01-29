@@ -124,14 +124,17 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	     	}
        }, function(result){ // 실패(오류) 하면 오는 곳
      	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
-    });
+       });
 	}
 	$scope.myroom = function(){
 		var myroom = document.getElementById("myCanvas");
+		var myobject = document.getElementById("myobject");
 		var mysetline = document.getElementById("mysetline");
 		var myhover = document.getElementById("myhover");
         //배경 
         var background = myroom.getContext("2d");
+        //배경 
+        var object = myobject.getContext("2d");
         //편집 
         var myinterface = mysetline.getContext("2d");
         //캐릭터
@@ -209,38 +212,51 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
             $(".inBox").height($(".inBox").width() / 5 * 2.2 + "px");
             $("#myCanvas").attr("width", 100 * 64 + "px");
             $("#myCanvas").attr("height", 100 * 64 + "px");
-            $("#myhover").attr("width", 100 * 64 + "px");
-            $("#myhover").attr("height", 100 * 64 + "px");
-            $("#mysetline").attr("width", 100 * 64 + "px");
-            $("#mysetline").attr("height", 100 * 64 + "px");
             wd = $("#myCanvas").width();
             hd = $("#myCanvas").height();
+            
+            $("#myhover").attr("width", wd);
+            $("#myhover").attr("height", hd);
+            $("#mysetline").attr("width", wd);
+            $("#mysetline").attr("height", hd);
+            $("#myobject").attr("width", wd);
+            $("#myobject").attr("height", hd);
+            
         	
-            $.each($tile, function (index, value) {
-                var y = (index - (index % 64)) / 64;
-                var x = (index - (y * 64));
-                
-                if (value != 0) {
-                	$.each($scope.inven.data, function (i, result) {
-        	     		if(result.itemno == value){
-        	     			var image = new Image();
-                            image.src = result.data;
-                            background.drawImage(image, x * (wd / 64), y * (wd / 64), result.wd, result.hd);
-        	     		}  
-                    });
-                }
-                
-            });
+            setting($tile);
+            setting($object);
+        }
+        function setting(data){
+        	 $.each(data, function (index, value) {
+                 var y = (index - (index % 64)) / 64;
+                 var x = (index - (y * 64));
+                 
+                 if (value != 0) {
+                 	$.each($scope.inven.data, function (i, result) {
+         	     		if(result.itemno == value){
+         	     			var image = new Image();
+                             image.src = value + ".png";
+                             if(data == $tile){
+                            	 background.drawImage(image, x * (wd / 64), y * (wd / 64), result.wd, result.hd);
+                             }else if(data == $object){
+                            	 object.drawImage(image, x * (wd / 64), y * (wd / 64), result.wd, result.hd);
+                             }
+         	     		}  
+                 	});
+                 }
+             });
         }
         $scope.room();
         $(".zoom-out").click(function () {
             if (zoomout) {
                 zoomout = false;
                 $("#myCanvas").css("-webkit-transform", "none");
+                $("#myobject").css("-webkit-transform", "none");
                 $(".zoom-out").text("전체보기");
             } else {
                 zoomout = true;
                 $("#myCanvas").css("-webkit-transform", "scale(0.2)");
+                $("#myobject").css("-webkit-transform", "scale(0.2)");
                 $(".inBox").scrollLeft(0);
                 $(".inBox").scrollTop(0);
                 set = false;
@@ -256,7 +272,6 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 
         $scope.imgivent = function(index) {
         	itemno = $scope.inven.data[index].itemno;
-        	src = $scope.inven.data[index].data;
         	type = $scope.inven.data[index].type;
         	tilewd = $scope.inven.data[index].wd;
         	tilehd = $scope.inven.data[index].hd;
@@ -272,15 +287,20 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         function tiledraw(x, y) {
             var px = x - (x % (wd / 64));
             var py = y - (y % (wd / 64));
-            $tile[(py / (wd / 64)) * 64 + px / (wd / 64)] = itemno;
+            
             var image = new Image();
-            image.src = src;
+            image.src = itemno + ".png";
             if(type == 1){
+            	$tile[(py / (wd / 64)) * 64 + px / (wd / 64)] = itemno;
             	background.clearRect(px, py, tilewd, tilehd);
+            	background.drawImage(image, px, py, tilewd, tilehd);
+            }else if(type == 2){
+            	$object[(py / (wd / 64)) * 64 + px / (wd / 64)] = itemno;
+            	object.clearRect(px, py, tilewd, tilehd);
+            	object.drawImage(image, px, py, tilewd, tilehd);
             }
-            background.drawImage(image, px, py, tilewd, tilehd);
+            
         }
-
 
         $(".set").click(function () {
             if (!set && !zoomout) {
@@ -297,20 +317,24 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
                 myinterface.translate(-0.5, -0.5);
                 myinterface.clearRect(0,0,wd,hd);
                 myinterface.closePath();
-                var update = "";
+                var uptile = "";
+                var upobject = "";
                 $.each($tile, function (index, value) {
-                	update += value + " ";
-                	
+                	uptile += value + " ";
                 });
-               $http.post("uptile", "", {params: {tile : update, kkono : $rootScope.user.kkono}})
+                $.each($object, function (index, value) {
+                	upobject += value + " ";
+                });
+               $http.post("uptile", "", {params: {tile : uptile, object : upobject, kkono : $rootScope.user.kkono}})
  	           .then(function(result){ // 성공하면 오는 곳
- 	        	   console.log(result);
+	 	        	  if(result.data.msg){
+	 	 	     		alert(result.data.msg);
+	 	 	     	}
 	 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	 	            console.log(result);
 	 	       });
             }
         });
-
         
         function setline() {
         	myinterface.beginPath();

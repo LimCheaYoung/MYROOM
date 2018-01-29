@@ -4,13 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="friend">
 	<select parameterType="hashmap" id="selectfriend" resultType="hashmap"> 
-      select 이름 as name, 이메일 as email, 추천수 as best
+      select 이름 as name, 이메일 as email, 추천수 as best, 카카오번호 as kkono
       from room inner join user
 	  on room.`유저번호` = user.`카카오번호`
 	  where user.`이메일` = #{email}
 	</select>
 	<select parameterType="hashmap" id="selectbest" resultType="hashmap"> 
-      select 이름 as name, 이메일 as email, 추천수 as best
+      select 이름 as name, 이메일 as email, 추천수 as best, 카카오번호 as kkono
       from room inner join user
 	  on room.`유저번호` = user.`카카오번호`
 	  order by 추천수 desc
@@ -20,7 +20,6 @@
 		select 타일 as tile, 가구 as object
         from room inner join user
 	    on room.`유저번호` = user.`카카오번호`
-	    where user.`이메일` = #{email}
+	    where user.`카카오번호` = #{kkono}
 	</select>
-	
 </mapper>

@@ -12,7 +12,10 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped ">
+                    <div class="inBox" data-ng-show="roomon">
+			            <canvas id="myCanvas"></canvas>
+			        </div>
+                    <table class="table table-striped">
                         <thead class="listH" style="background-color: brown; color: aliceblue">
                             <tr>
                             	<th>번호</th>
@@ -22,7 +25,7 @@
                             </tr>
                         </thead>
                         <tbody class="listB" data-ng-repeat="rows in friend">
-                            <tr>
+                            <tr data-ng-click="room($index)">
                             	<td>{{ $index + 1 }}</td>
                                 <td>{{ rows.name }}</td>
 						        <td>{{ rows.email }}</td>
