@@ -17,6 +17,7 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	$scope.data={};
 	$scope.inven={};
 	$scope.roomon=false;
+	$rootScope.items = [];
 	$scope.selectBest = function(){
 	      $http.post("selectbest", "")
 	           .then(function(result){ // 성공하면 오는 곳
@@ -39,14 +40,12 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	      $http.post("findroom", "", {params: $scope.friend[index]})
           .then(function(result){ // 성공하면 오는 곳
         	  $scope.roomon = true;
-        	  $scope.data = result.data.data;
-        	  $scope.inven.data = result.data.inven;
-        	  $scope.myroom();
+        	  $scope.myroom(result.data.data, result.data.inven);
          }, function(result){ // 실패(오류) 하면 오는 곳
            console.log(result);
          });
 	}
-	$scope.myroom = function(){
+	$scope.myroom = function(data, inven){
 		var myroom = document.getElementById("myCanvas");
         //배경 
         var background = myroom.getContext("2d");
@@ -71,8 +70,8 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         var scrollx;
         var scrolly;
         //타일(배경)
-        var tile = $scope.data.tile.split(" ");
-        var furniture = $scope.data.object.split(" ");
+        var tile = data.tile.split(" ");
+        var furniture = data.object.split(" ");
         
         wd = $("#myCanvas").width();
         hd = $("#myCanvas").height();
@@ -121,35 +120,55 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 
             }
         }
-        function setting(data){
-       	 $.each(data, function (index, value) {
-                var y = (index - (index % 64)) / 64;
-                var x = (index - (y * 64));
-                
-                if (value != 0) {
-                	$.each($scope.inven.data, function (i, result) {
-        	     		if(result.itemno == value){
-        	     			var image = new Image();
-                            image.src = "resources/item/" +  value + ".png";
-                            console.log(value);
-                            if(data == tile){
-                           	 background.drawImage(image, x * 100, y * 100, result.wd, result.hd);
-                            }else if(data == furniture){
-                             background.drawImage(image, x * 100, y * 100, result.wd, result.hd);
-                            }
-                            console.log(x*100,y*100,result.wd,result.hd);
-        	     		}  
-                	});
-                }
-            });
+        var checkTile = true;
+        var checkFurniture = true;
+        function setting(data, type){
+        	var array = [];
+	       	 $.each(data, function (index, value) {
+	                var y = (index - (index % 64)) / 64;
+	                var x = (index - (y * 64));
+
+	                if (value != 0) {
+	                	$.each(inven, function (i, result) {
+	        	     		if(result.itemno == value){
+	        	     			if(type == "tile"){
+	        	     				checkTile = false;
+	        	            	} else if(type == "furniture"){
+	        	            		checkFurniture = false;
+	        	            	}
+	        	     			console.log(value);
+	        	     			$rootScope.items.push({itemno : value});
+	                            array.push({image: value, x: x, y: y, wd: result.wd, hd: result.hd});
+	        	     		}  
+	                	});
+	                }
+	            });
+	       	if((checkTile && checkFurniture) && type == "furniture"){
+        		background.clearRect(0,0,6400,6400);
+        		return false;
+        	}
+	       	console.log(array);
+	       	setTimeout(function(){
+	       		image(array, background);
+	       	}, 200);
        }
+        
+       function image(array, background){
+    	   $.each(array, function (index, value) {
+	       		var image = new Image();
+	       		image.src = "resources/item/" +  value.image + ".png";
+	       		background.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
+               console.log( value.x * 100,  value.y * 100, value.wd, value.hd);
+	       	});
+       }
+        
         //기본 룸 설정
-        $scope.room = function() {
-            setting(tile);
-            setting(furniture);
-        }
-        setTimeout(function(){
-        	$scope.room();
-        },10);
+//        $scope.room = function() {
+            setting(tile, 'tile');
+            setting(furniture, 'furniture');
+//        }
+//        setTimeout(function(){
+//        	$scope.room();
+//        },10);
 	}
 });

@@ -1,8 +1,15 @@
 <div class="panel panel-default">
      <div class="panel-body text-center">
          <h1>상점</h1>
+         <div class="btn-group pull-right">
+                 <button type="button" class="btn btn-default btn-filter" data-target="ALL">ALL</button>
+                 <button type="button" class="btn btn-success btn-filter" data-target="FREE">FREE</button>
+                 <button type="button" class="btn btn-warning btn-filter" data-target="INFO">INFO</button>
+                 <button type="button" class="btn btn-danger btn-filter" data-target="MOVIE">MOVIE</button>
+         </div>
      </div>
      <div class="item panel-footer col-md-12 text-center store">
+     	
           <div class="search">
              <div class="input-group">
                  <input type="text" class="form-control search" placeholder="Search for..." data-ng-model="shop.char">

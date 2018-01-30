@@ -249,3 +249,66 @@ footer {
 table{
 	text-align :center;
 }
+/*안주면 이미지 코딱지됨*/
+
+.myitem img {
+    width: 100%;
+}
+
+
+/*닫기버튼*/
+
+.close-path:after {
+    content: '✖';
+    position: absolute;
+    cursor: pointer;
+    right: 0;
+    margin-right: 9px;
+    background-color: #c3b0b0;
+    color: #118667;
+    height: 15px;
+    border-radius: 13px;
+}
+
+/*inven 먹히게 고정값변경*/
+
+.inven {
+    width: 1900px;
+}
+
+
+@media only screen and (max-width:992px) {
+    .myitem {
+        width: calc(100% / 6);
+        float: left;
+    }
+}
+
+
+@media only screen and (max-width:768px) {
+    .store .portfolio-item {
+        width: calc(100% / 3);
+        float: left;
+    }
+    .myitem {
+        width: calc(100% / 6);
+        float: left;
+    }
+    .inven {
+        width: 766px;
+    }
+}
+
+@media only screen and (max-width:500px) {
+    .store .portfolio-item {
+        width: calc(100% / 2);
+        float: left;
+    }
+    .myitem {
+        width: calc(100% / 3);
+        float: left;
+    }
+    .inven {
+        width: 548px;
+    }
+}

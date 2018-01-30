@@ -28,5 +28,8 @@
 	<div data-ng-include="nav"></div>
 	<div class="container-fluid sbody" data-ng-view></div>
 	<footer class="text-center" data-ng-include="footer"></footer>
+	<div style="display: none;">
+		<img data-ng-src="resources/item/{{row.itemno}}.png" data-ng-repeat="row in items">
+	</div>
 </body>
 </html>

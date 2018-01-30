@@ -26,6 +26,13 @@
                     <div class="tab-content">
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 0}" id="tab1danger" >
 	                        <h4 data-ng-if="inven.data.length == 0">아이템이 없습니다.</h4>
+	                       <div class="myinven col-md-12 text-right">
+	                        <div class="myitem col-md-1 text-center">
+	                            <p class="close-path"></p>
+	                            <img src="../item/2.png" alt="">
+	                            <p>선인장1</p>
+	                        </div>
+                    </div>
 	                        <img data-ng-repeat="rows in inven.data" data-ng-src="{{'resources/item/' + rows.itemno + '.png'}}" data-ng-if="rows.type == 1" data-ng-click="imgivent($index)">
                         </div>
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 1}" id="tab2danger">
