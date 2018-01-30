@@ -33,5 +33,17 @@ public class ShopController {
 	public ModelAndView addpoint(HttpServletRequest req){
 		return HttpUtil.returnJson(ssi.addpoint(HttpUtil.paramMap(req)));
 	}
+	@RequestMapping(value = "/selectmine", method = RequestMethod.POST)
+	public ModelAndView selectmine(HttpServletRequest req){
+		return HttpUtil.returnJson(ssi.selectmine(HttpUtil.paramMap(req)));
+	}
+	@RequestMapping(value = "/updel", method = RequestMethod.POST)
+	public ModelAndView updel(HttpServletRequest req){
+		return HttpUtil.returnJson(ssi.updel(HttpUtil.paramMap(req)));
+	}
+	@RequestMapping(value = "/upshop", method = RequestMethod.POST)
+	public ModelAndView upshop(HttpServletRequest req){
+		return HttpUtil.returnJson(ssi.upshop(HttpUtil.paramMap(req)));
+	}
 
 }

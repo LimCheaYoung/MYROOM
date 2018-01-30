@@ -16,9 +16,11 @@ app.config(function($routeProvider){
 });
 
 app.run(function($rootScope, $http){
+	$rootScope.items = [];
 	$rootScope.loginbool = false;
 	$rootScope.user = {};
 	$rootScope.nav = "resources/html/nav.html";
+	$rootScope.image = "resources/html/image.html";
 	$rootScope.navEvent = function(){
 	      $rootScope.navDis = location.hash;
 	}

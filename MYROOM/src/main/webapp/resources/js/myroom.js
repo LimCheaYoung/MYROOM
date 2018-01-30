@@ -18,6 +18,8 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	$scope.inven = {
 			data : []
 	};
+	$scope.selecttype = {};
+	
 	$scope.selectRoom = function(){
 		console.log("room시작전", $rootScope.loginbool);
 		if($rootScope.loginbool){
@@ -190,34 +192,53 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 
             }
         }
-        function setting(data){
-       	 $.each(data, function (index, value) {
-                var y = (index - (index % 64)) / 64;
-                var x = (index - (y * 64));
-                
-                if (value != 0) {
-                	$.each($scope.inven.data, function (i, result) {
-        	     		if(result.itemno == value){
-        	     			var image = new Image();
-                            image.src = "resources/item/" +  value + ".png";
-                            if(data == tile){
-                           	 background.drawImage(image, x * 100, y * 100, result.wd, result.hd);
-                            }else if(data == furniture){
-                           	 object.drawImage(image, x * 100, y * 100, result.wd, result.hd);
-                            }
-        	     		}  
-                	});
-                }
-            });
+        var checkTile = true;
+        var checkFurniture = true;
+        function setting(data, type){
+        	var array = [];
+	       	 $.each(data, function (index, value) {
+	                var y = (index - (index % 64)) / 64;
+	                var x = (index - (y * 64));
+
+	                if (value != 0) {
+	                	$.each($scope.inven.data, function (i, result) {
+	        	     		if(result.itemno == value){
+	        	     			if(type == "tile"){
+	        	     				checkTile = false;
+	        	            	} else if(type == "furniture"){
+	        	            		checkFurniture = false;
+	        	            	}
+	        	     			console.log(value);
+	        	     			$rootScope.items.push({itemno : value});
+	        	     			item = 
+	                            array.push({image: value, x: x, y: y, wd: result.wd, hd: result.hd});
+	        	     		}  
+	                	});
+	                }
+	            });
+	       	if((checkTile && checkFurniture) && type == "furniture"){
+        		background.clearRect(0,0,6400,6400);
+        		return false;
+        	}
+	       	console.log(array);
+	       	setTimeout(function(){
+	       		image(array, background, type);
+	       	}, 200);
        }
-        //기본 룸 설정
-        $scope.room = function() {
-            setting(tile);
-            setting(furniture);
+        function image(array, background, type){
+     	   $.each(array, function (index, value) {
+ 	       		var image = new Image();
+ 	       		image.src = "resources/item/" +  value.image + ".png";
+	 	       	if(type == "tile"){
+	 	       		background.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
+	        	} else if(type == "furniture"){
+	        		obejct.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
+	        	}
+ 	       	});
         }
-        setTimeout(function(){
-        	$scope.room();
-        },100);
+
+       setting(tile, 'tile');
+       setting(furniture, 'furniture');
         
         $(".zoom-out").click(function () {
             if (zoomout) {
@@ -246,6 +267,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         	type = $scope.inven.data[index].type;
         	tilewd = $scope.inven.data[index].wd;
         	tilehd = $scope.inven.data[index].hd;
+        	console.log(tilewd, tilehd);
             if (!set) {
                 set = true;
                 $(".set").text("편집 ON");
@@ -262,10 +284,20 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
             var image = new Image();
             image.src = "resources/item/" +  itemno + ".png";
             if(type == 1){
+            	$.each($scope.inven.data, function (i, result) {
+    	     		if(tile[(py / 100) * 64 + px / 100] == result.itemno){
+    	     			background.clearRect(px, py, result.wd, result.hd);
+    	     		}  
+            	});
             	tile[(py / 100) * 64 + px / 100] = itemno;
             	background.clearRect(px, py, tilewd, tilehd);
             	background.drawImage(image, px, py, tilewd, tilehd);
             }else if(type == 2){
+            	$.each($scope.inven.data, function (i, result) {
+    	     		if(tile[(py / 100) * 64 + px / 100] == result.itemno){
+    	     			object.clearRect(px, py, result.wd, result.hd);
+    	     		}  
+            	});
             	object[(py / 100) * 64 + px / 100] = itemno;
             	object.clearRect(px, py, tilewd, tilehd);
             	object.drawImage(image, px, py, tilewd, tilehd);
@@ -293,7 +325,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
                 $.each(tile, function (index, value) {
                 	uptile += value + " ";
                 });
-                $.each(object, function (index, value) {
+                $.each(furniture, function (index, value) {
                 	upobject += value + " ";
                 });
                $http.post("uptile", "", {params: {tile : uptile, object : upobject, kkono : $rootScope.user.kkono}})
@@ -456,6 +488,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	    	hd = $("#myline").attr("height");
 	    	drawline();
 	    });
+	    
 	}
 	
 	$scope.tabEvent = function(index){

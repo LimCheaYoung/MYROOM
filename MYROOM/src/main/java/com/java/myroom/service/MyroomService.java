@@ -67,7 +67,7 @@ public class MyroomService implements MyroomServiceInterface {
 				if(status != 1) {
 					result.put("msg", "예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 				}else {
-					String path = "C:/Users/GD/git/MYROOM/myroom/src/main/webapp/";
+					String path = "C:/Users/cod_d/git/MYROOM/MYROOM/src/main/webapp/";
 					fsi.Fileupload(path, param.get("data").toString(), param.get("itemno").toString());
 					return param;
 				}

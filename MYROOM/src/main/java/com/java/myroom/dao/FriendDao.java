@@ -29,6 +29,26 @@ public class FriendDao implements FriendDaoInterface {
 	public List<HashMap<String, Object>> selectbest() {
 		return session.selectList("friend.selectbest");
 	}
+
+	@Override
+	public int addfriend(HashMap<String, Object> param) {
+		return session.insert("friend.addfriend",param);
+	}
+
+	@Override
+	public int delfriend(HashMap<String, Object> param) {
+		return session.delete("friend.delfriend",param);
+	}
+
+	@Override
+	public HashMap<String, Object> selectmyfriend(HashMap<String, Object> param) {
+		return session.selectOne("friend.selectmyfriend", param);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> myfriend(HashMap<String, Object> param) {
+		return session.selectList("friend.myfriend", param);
+	}
 	
 	
 }

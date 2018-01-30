@@ -17,12 +17,11 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	$scope.data={};
 	$scope.inven={};
 	$scope.roomon=false;
-	$rootScope.items = [];
+	
 	$scope.selectBest = function(){
 	      $http.post("selectbest", "")
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.friend = result.data.result;
-	        	   console.log($scope.friend);
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	       });
@@ -31,7 +30,9 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	      $http.post("selectfriend", "", {params: $scope.friend})
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.friend = result.data.result;
-	        	   console.log($scope.friend);
+	        	   if(friend.lenght == 0){
+	        		   alert("그런 사람 없습니다.");
+	        	   }
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	   });
@@ -61,9 +62,6 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         //편집모드
         var set = false;
         var src;
-        var tilewd;
-        var tilehd;
-        var type;
         //아이템번호
         var itemno = 0;
         //스크롤
@@ -138,6 +136,7 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	        	            	}
 	        	     			console.log(value);
 	        	     			$rootScope.items.push({itemno : value});
+	        	     			item = 
 	                            array.push({image: value, x: x, y: y, wd: result.wd, hd: result.hd});
 	        	     		}  
 	                	});
@@ -152,7 +151,6 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	       		image(array, background);
 	       	}, 200);
        }
-        
        function image(array, background){
     	   $.each(array, function (index, value) {
 	       		var image = new Image();
@@ -162,13 +160,8 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	       	});
        }
         
-        //기본 룸 설정
-//        $scope.room = function() {
-            setting(tile, 'tile');
-            setting(furniture, 'furniture');
-//        }
-//        setTimeout(function(){
-//        	$scope.room();
-//        },10);
+       setting(tile, 'tile');
+       setting(furniture, 'furniture');
+
 	}
 });

@@ -22,4 +22,24 @@
 	    on room.`유저번호` = user.`카카오번호`
 	    where user.`카카오번호` = #{kkono}
 	</select>
+	<select parameterType="hashmap" id="myfriend" resultType="hashmap"> 
+      select 이름 as name, 이메일 as email, 추천수 as best, 카카오번호 as kkono
+      from friend inner join user inner join room
+	  on friend.`친구번호` = user.`카카오번호` and user.`카카오번호` = room.`유저번호`
+	  where friend.`유저번호` = #{kkono}
+	</select>
+	<select parameterType="hashmap" id="selectmyfriend" resultType="hashmap"> 
+      select count(*) as status
+      from friend inner join user
+	  on friend.`친구번호` = user.`카카오번호`
+	  where friend.`친구번호` = #{friendno} and friend.`유저번호` = #{kkono}
+	</select>
+	<delete  parameterType="hashmap" id="delfriend">
+		delete from friend
+	    where 친구번호 = #{friendno} and 유저번호 = #{kkono}
+	</delete>
+	<insert  parameterType="hashmap" id="addfriend">
+		insert into friend(유저번호, 친구번호)
+		values (#{kkono}, #{friendno})
+	</insert>
 </mapper>

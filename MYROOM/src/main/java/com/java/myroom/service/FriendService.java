@@ -41,6 +41,24 @@ public class FriendService implements FriendServiceInterface {
 		return result;
 	}
 
+	@Override
+	public HashMap<String, Object> myfriend(HashMap<String, Object> param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, Object> addfriend(HashMap<String, Object> param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HashMap<String, Object> delfriend(HashMap<String, Object> param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 	
 }

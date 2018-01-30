@@ -10,4 +10,7 @@ public interface ShopDaoInterface {
 	public HashMap<String, Object> selectpoint(HashMap<String, Object> param);
 	public int uppoint2(HashMap<String, Object> param);
 	public int uppoint(HashMap<String, Object> param);
+	public List<HashMap<String, Object>> selectmine(HashMap<String, Object> param);
+	public int updel(HashMap<String, Object> param);
+	public int upshop(HashMap<String, Object> param);
 }

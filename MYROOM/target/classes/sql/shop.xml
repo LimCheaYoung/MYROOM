@@ -7,17 +7,24 @@
 	  select 이름 as name, 템번호 as itemno, 타입 as type, 가격 as price, 유저번호 as kkono
       from shop as s inner join item as i
       on s.`템번호` = i.`번호`
+      where 삭제 = 'N'
+	</select>
+	<select parameterType="hashmap" id="searchshop" resultType="hashmap"> 
+	  select 이름 as name, 템번호 as itemno, 타입 as type, 가격 as price, 유저번호 as kkono
+      from shop as s inner join item as i
+      on s.`템번호` = i.`번호`
+      where 삭제 = 'N' and 이름 like '%${char}%'
 	</select>
 	<select parameterType="hashmap" id="selectpoint" resultType="hashmap"> 
 	  select 포인트 as point
       from user
       where 카카오번호 = #{kkono}
 	</select>
-	<select parameterType="hashmap" id="searchshop" resultType="hashmap"> 
-      select 이름 as name, 템번호 as itemno, 타입 as type, 가격 as price, 유저번호 as kkono
+	<select parameterType="hashmap" id="selectmine" resultType="hashmap"> 
+	select 이름 as name, 템번호 as itemno, 타입 as type, 가격 as price, 유저번호 as kkono
       from shop as s inner join item as i
       on s.`템번호` = i.`번호`
-      where 이름 like '%${char}%'
+      where 삭제 = 'N' and i.`유저번호` = #{kkono}
 	</select>
 	<update parameterType="hashmap" id="uppoint"> 
 		update user
@@ -28,5 +35,15 @@
 		update user
 		set 포인트 = (포인트 + ${price})
 		where 카카오번호 = #{kkono2}
+	</update>
+	<update parameterType="hashmap" id="upshop"> 
+		update shop
+		set 가격 = #{point}
+		where 템번호 = #{itemno}
+	</update>
+	<update parameterType="hashmap" id="updel"> 
+		update shop
+		set 삭제 = 'Y'
+		where 템번호 = #{itemno}
 	</update>
 </mapper>

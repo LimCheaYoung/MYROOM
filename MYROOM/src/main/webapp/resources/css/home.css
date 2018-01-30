@@ -270,12 +270,6 @@ table{
     border-radius: 13px;
 }
 
-/*inven 먹히게 고정값변경*/
-
-.inven {
-    width: 1900px;
-}
-
 
 @media only screen and (max-width:992px) {
     .myitem {
@@ -286,7 +280,7 @@ table{
 
 
 @media only screen and (max-width:768px) {
-    .store .portfolio-item {
+     .store .portfolio-item {
         width: calc(100% / 3);
         float: left;
     }
@@ -294,21 +288,15 @@ table{
         width: calc(100% / 6);
         float: left;
     }
-    .inven {
-        width: 766px;
-    }
 }
 
 @media only screen and (max-width:500px) {
-    .store .portfolio-item {
+     .store .portfolio-item {
         width: calc(100% / 2);
         float: left;
     }
     .myitem {
         width: calc(100% / 3);
-        float: left;
-    }
-    .inven {
-        width: 548px;
+       float: left;
     }
 }

@@ -40,5 +40,23 @@ public class ShopDao implements ShopDaoInterface {
 		return session.update("shop.uppoint2", param);
 	}
 
+
+	@Override
+	public List<HashMap<String, Object>> selectmine(HashMap<String, Object> param) {
+		return session.selectList("shop.selectmine", param);
+	}
+
+
+	@Override
+	public int updel(HashMap<String, Object> param) {
+		return session.update("shop.updel", param);
+	}
+
+
+	@Override
+	public int upshop(HashMap<String, Object> param) {
+		return session.update("shop.upshop", param);
+	}
+
 	
 }
