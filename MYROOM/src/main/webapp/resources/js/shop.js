@@ -7,6 +7,7 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
 		console.log("세션",result.data);
   	   if(result.data.status == 0){
   		  $rootScope.loginbool = false;
+  		  location.href ="#!/friend";
   	   }else if(result.data.status == 1){
   		  $rootScope.user = result.data.user;
   		  $rootScope.loginbool = true;
@@ -21,7 +22,6 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
 	      $http.post("selectshop", "")
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.shop = result.data.result;
-	        	   console.log($scope.shop);
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	       });
@@ -30,6 +30,9 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
 	      $http.post("searchshop", "", {params: $scope.shop})
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.shop = result.data.result;
+	        	   if($scope.shop.length == 0){
+	        		   alert("검색 결과가 없습니다.");
+	        	   }
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	   });

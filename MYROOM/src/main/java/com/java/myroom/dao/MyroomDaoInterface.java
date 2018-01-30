@@ -12,4 +12,5 @@ public interface MyroomDaoInterface {
 	public int addshop(HashMap<String, Object> param);
 	public HashMap<String, Object> selectitem(HashMap<String, Object> param);
 	public List<HashMap<String, Object>> selectinven(HashMap<String, Object> param);
+	public HashMap<String, Object> selectRoom(HashMap<String, Object> param);
 }

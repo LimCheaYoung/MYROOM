@@ -11,9 +11,10 @@
                  </span>
              </div>
          </div>
+         <h4 data-ng-if="shop.length == 0">상품이 없습니다.</h4>
          <div class="col-md-2 col-sm-2 portfolio-item" data-ng-repeat="rows in shop">
-             <img data-ng-src="{{rows.data + 'png'}}">
-             <p>{{rows.name}}</p>
+             <img data-ng-src="{{'resources/item/' +rows.itemno + '.png'}}">
+             <p style="clear:both">{{rows.name}}</p>
              <p>{{rows.price}}포인트<button class="btn btn-success" data-ng-click="additem($index)">구매</button></p>
          </div>
         

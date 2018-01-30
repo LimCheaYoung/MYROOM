@@ -19,13 +19,17 @@ public class MyroomController {
 	@Autowired
 	MyroomServiceInterface msi;
 	
+	@RequestMapping(value = "/selectRoom", method = RequestMethod.POST)
+	public ModelAndView selectRoom(HttpServletRequest req){
+		return HttpUtil.returnJson(msi.selectRoom(HttpUtil.paramMap(req)));
+	}
 	@RequestMapping(value = "/uptile", method = RequestMethod.POST)
 	public ModelAndView uptile(HttpServletRequest req){
 		return HttpUtil.returnJson(msi.uptile(HttpUtil.paramMap(req)));
 	}
 	@RequestMapping(value = "/additem", method = RequestMethod.POST)
 	public ModelAndView additem(HttpServletRequest req) throws Exception{
-		return HttpUtil.returnJson(msi.additem(HttpUtil.paramMap(req)));
+		return HttpUtil.returnJson(msi.additem(HttpUtil.paramMap(req), req));
 	}
 	@RequestMapping(value = "/addinven", method = RequestMethod.POST)
 	public ModelAndView addinven(HttpServletRequest req){
@@ -33,7 +37,7 @@ public class MyroomController {
 	}
 	@RequestMapping(value = "/addshop", method = RequestMethod.POST)
 	public ModelAndView addUser(HttpServletRequest req) throws Exception{
-		return HttpUtil.returnJson(msi.addshop(HttpUtil.paramMap(req)));
+		return HttpUtil.returnJson(msi.addshop(HttpUtil.paramMap(req), req));
 	}
 	
 	@RequestMapping(value = "/selectinven", method = RequestMethod.POST)

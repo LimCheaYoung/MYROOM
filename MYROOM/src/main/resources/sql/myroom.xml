@@ -24,6 +24,11 @@
       from item
 	  where item.`이름` = #{name}
 	</select>
+	<select parameterType="hashmap" id="selectRoom" resultType="hashmap"> 
+	select 타일 as tile, 가구 as object, 추천수 as best
+      from room
+      where 유저번호 = #{kkono}
+	</select>
 	<insert parameterType="hashmap" id="additem"> 
 	insert into item(이름, 높이, 가로, 타입, 유저번호)
 		values (#{name}, #{wd}, #{hd}, #{type}, #{kkono})

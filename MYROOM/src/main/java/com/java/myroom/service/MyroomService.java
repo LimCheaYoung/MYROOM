@@ -3,6 +3,8 @@ package com.java.myroom.service;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,9 +51,10 @@ public class MyroomService implements MyroomServiceInterface {
 	}
 
 	@Override
-	public HashMap<String, Object> additem(HashMap<String, Object> param) throws Exception{
+	public HashMap<String, Object> additem(HashMap<String, Object> param, HttpServletRequest req) throws Exception{
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		result = mdi.selectitem(param);
+		/*String path = req.getSession().getServletContext().getRealPath("/");*/
 		
 		if(Integer.parseInt(result.get("count").toString()) != 0) {
 			result.put("msg", "이미 이름입니다.");
@@ -64,7 +67,8 @@ public class MyroomService implements MyroomServiceInterface {
 				if(status != 1) {
 					result.put("msg", "예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 				}else {
-					fsi.Fileupload(param.get("data").toString(), param.get("itemno").toString());
+					String path = "C:/Users/GD/git/MYROOM/myroom/src/main/webapp/";
+					fsi.Fileupload(path, param.get("data").toString(), param.get("itemno").toString());
 					return param;
 				}
 			} else {
@@ -77,9 +81,9 @@ public class MyroomService implements MyroomServiceInterface {
 
 
 	@Override
-	public HashMap<String, Object> addshop(HashMap<String, Object> param) throws Exception {
+	public HashMap<String, Object> addshop(HashMap<String, Object> param, HttpServletRequest req) throws Exception {
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		result = additem(param);
+		result = additem(param, req);
 		if(result.containsKey("msg")) {
 			return result;
 		}
@@ -106,6 +110,11 @@ public class MyroomService implements MyroomServiceInterface {
 		return result;
 	}
 
-	
-	
+	@Override
+	public HashMap<String, Object> selectRoom(HashMap<String, Object> param) {
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		result.put("result", mdi.selectRoom(param));
+		result.put("inven", mdi.selectinven(param));
+		return result;
+	}
 }

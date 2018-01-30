@@ -48,6 +48,10 @@ public class MyroomDao implements MyroomDaoInterface {
 	public List<HashMap<String, Object>> selectinven(HashMap<String, Object> param) {
 		return session.selectList("myroom.selectinven", param);
 	}
+	@Override
+	public HashMap<String, Object> selectRoom(HashMap<String, Object> param) {
+		return session.selectOne("myroom.selectRoom", param);
+	}
 	
 	
 }

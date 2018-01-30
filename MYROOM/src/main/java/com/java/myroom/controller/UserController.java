@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.java.myroom.dao.UserDaoInterface;
 import com.java.myroom.service.UserServiceInterface;
 import com.java.myroom.util.HttpUtil;
 
@@ -21,24 +23,34 @@ public class UserController {
 	
 	@Autowired
 	UserServiceInterface usi;
+	@Autowired
+	UserDaoInterface udi;
 
-	@RequestMapping(value = "/selectRoom", method = RequestMethod.POST)
-	public ModelAndView selectRoom(HttpServletRequest req){
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public ModelAndView login(HttpServletRequest req, HttpSession session){
 		HashMap<String, Object> param = HttpUtil.getParameterMap(req);
-		HashMap<String, Object> result = usi.selectRoom(param);
-		result = (HashMap<String, Object>)result.get("point");
-		param.put("point", result.get("point"));
-		
-		HttpSession session = req.getSession();
-		if(session.getAttribute("user") == null) {
-			session.setAttribute("user", param);
+		HashMap<String, Object> result = usi.addUser(param);
+		if(result.containsKey("msg")) {
+			return HttpUtil.returnJson(result);
+		}else {
+			result = udi.selectuser(param);
+			param.put("point", result.get("point"));
+			
+			result = new HashMap<String, Object>();
+			
+			if(session.getAttribute("user") == null) {
+				session.setAttribute("user", param);
+				result.put("user", param);
+				result.put("status", 1);
+			}else {
+				result.put("status", 0);
+			}
+			return HttpUtil.returnJson(result);
 		}
-		return HttpUtil.returnJson(usi.selectRoom(HttpUtil.paramMap(req)));
 	}
 	@RequestMapping(value = "/session", method = RequestMethod.POST)
-	public ModelAndView session(HttpServletRequest req){
+	public ModelAndView session(HttpServletRequest req, HttpSession session){
 		HashMap<String, Object> result = new HashMap<String, Object>();
-		HttpSession session = req.getSession();
 		result.put("user", session.getAttribute("user"));
 		if(session.getAttribute("user") == null) {
 			result.put("status", 0);
@@ -50,14 +62,8 @@ public class UserController {
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public ModelAndView logout(HttpServletRequest req, HttpSession session){
-		HashMap<String, Object> result = new HashMap<String, Object>();
 		session.invalidate();
-		if(session != null) {
-			result.put("status", 1);
-		}else {
-			result.put("status", 0);
-		}
-
-		return HttpUtil.returnJson(result);
+		session = req.getSession();
+		return session(req, session);
 	}
 }

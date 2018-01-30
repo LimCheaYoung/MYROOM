@@ -25,9 +25,6 @@ public class UserDao implements UserDaoInterface {
 	public int addRoom(HashMap<String, Object> param) {
 		return session.insert("user.addRoom", param);
 	}
-	@Override
-	public HashMap<String, Object> selectRoom(HashMap<String, Object> param) {
-		return session.selectOne("user.selectRoom", param);
-	}
+
 
 }

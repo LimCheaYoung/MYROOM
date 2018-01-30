@@ -5,5 +5,5 @@ import java.util.HashMap;
 
 public interface FileServiceInterface {
 	
-	public void Fileupload(String imgbase64, String savename) throws Exception;
+	public void Fileupload(String path, String imgbase64, String savename) throws Exception;
 }

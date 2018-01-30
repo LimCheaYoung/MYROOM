@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class FileService implements FileServiceInterface {
 
 	@Override
-	public void Fileupload(String imgbase64, String savename) throws Exception {
+	public void Fileupload(String path, String imgbase64, String savename) throws Exception {
 		/**
 		 * imgbase64 (imgbase64data:image/png;base64,iVBORw0KGgoAA 로 시작)
 		 * saveFilePath (저장경로)
@@ -28,9 +28,12 @@ public class FileService implements FileServiceInterface {
 			ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
 			image = ImageIO.read(bis);
 			bis.close();
-
+			
+//			String path = req.getSession().getServletContext().getRealPath("/") + path2;
+			System.out.println("Fileupload : " + path);
+			path += "resources/item/";
 			// write the image to a file
-			File outputfile = new File("C:/Users/GD/git/MYROOM/myroom/src/main/webapp/resources/item/" + savename + ".png");
+			File outputfile = new File(path + savename + ".png");
 			ImageIO.write(image, "png", outputfile); // 파일생성
 			
 		} catch (IOException e) {

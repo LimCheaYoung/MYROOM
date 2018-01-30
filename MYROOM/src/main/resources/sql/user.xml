@@ -4,14 +4,9 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="user">
 	<select parameterType="hashmap" id="selectUser" resultType="hashmap"> 
-		select count(*) as user, 포인트 as point
+		select count(*) as status, 포인트 as point
 		from user
 		where 카카오번호 = #{kkono}
-	</select>
-	<select parameterType="hashmap" id="selectRoom" resultType="hashmap"> 
-	select 타일 as tile, 가구 as object, 추천수 as best
-      from room
-      where 유저번호 = #{kkono}
 	</select>
 	<insert parameterType="hashmap" id="addUser"> 
 	insert into user (카카오번호, 이름, 이메일)
