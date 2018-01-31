@@ -47,6 +47,7 @@ public class ShopService implements ShopServiceInterface {
 				status = sdi.uppoint(param);
 				if(status == 1) {
 					result = msi.addinven(param);
+					result.put("result", sdi.selectshop());
 				}
 			}else {
 				result.put("msg", "구매과정에서 문제가 발생하였습니다.");
@@ -68,6 +69,7 @@ public class ShopService implements ShopServiceInterface {
 		int status = sdi.updel(param);
 		if(status == 1) {
 			result.put("msg", "판매를 중단하였습니다.");
+			result.put("result", sdi.selectshop());
 		}else {
 			result.put("msg", "중단과정에서 문제가 발생하였습니다.");
 		}
@@ -80,6 +82,7 @@ public class ShopService implements ShopServiceInterface {
 		int status = sdi.upshop(param);
 		if(status == 1) {
 			result.put("msg", "금액을 수정하였습니다.");
+			result.put("result", sdi.selectshop());
 		}else {
 			result.put("msg", "수정과정에서 문제가 발생하였습니다.");
 		}

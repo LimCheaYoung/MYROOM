@@ -11,6 +11,10 @@
                     </div>
                 </div>
                 <div class="card-body">
+                <div class="btn-group pull-right" data-ng-show="loginbool">
+			                 <button type="button" class="btn btn-success btn-filter" data-ng-click="selectBest()">베스트</button>
+			                 <button type="button" class="btn btn-warning btn-filter"data-ng-click="myfriend()">내 좋아요</button>
+			         </div>
                     <div class="inBox" data-ng-show="roomon">
 			            <canvas id="myCanvas" width="6400" height="6400"></canvas>
 			        </div>
@@ -32,7 +36,8 @@
 						        <td>{{ rows.email }}</td>
 						        <td>{{ rows.best }}</td>
 						        <td><button data-ng-click="findroom($index)" class="btn btn-danger">방문하기</button></td>
-						        <td><button data-ng-click="addfriend($index)" class="btn btn-danger">추천하기</button></td>
+						        <td><button data-ng-click="delfriend($index)" class="btn btn-danger" data-ng-hide="!loginbool || (loginbool && check)">취소하기</button><button data-ng-click="addfriend($index)" class="btn btn-danger" data-ng-show="loginbool && check">추천하기</button></td>
+
                             </tr>
                         </tbody>
                     </table>

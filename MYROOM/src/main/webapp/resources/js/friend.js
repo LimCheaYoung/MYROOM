@@ -3,7 +3,6 @@ var app = angular.module("MyFriend", []);
 app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	LoginService.async().then(function(){
 		var result = LoginService.data();
-		console.log("세션",result.data);
   	   if(result.data.status == 0){
   		  $rootScope.loginbool = false;
   		  $scope.selectBest();
@@ -17,13 +16,15 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	$scope.data={};
 	$scope.inven={};
 	$scope.roomon=false;
+	$scope.check = true;
 	
 	$scope.selectBest = function(){
 	      $http.post("selectbest", "")
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.friend = result.data.result;
+	        	   $scope.check = true;
 	          }, function(result){ // 실패(오류) 하면 오는 곳
-	            console.log(result);
+	        	  alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 	       });
 	}
 	$scope.selectfriend = function(){
@@ -34,7 +35,44 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	        		   alert("그런 사람 없습니다.");
 	        	   }
 	          }, function(result){ // 실패(오류) 하면 오는 곳
-	            console.log(result);
+	        	  alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
+	   });
+	}
+	$scope.myfriend = function(){
+	      $http.post("myfriend", "", {params: $rootScope.user})
+	           .then(function(result){ // 성공하면 오는 곳
+	        	   $scope.friend = result.data.result;
+	        	   $scope.check = false;
+	          }, function(result){ // 실패(오류) 하면 오는 곳
+	        	  alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
+	   });
+	}
+	$scope.addfriend = function(index){
+		console.log($scope.friend[index]);
+	    $http.post("addfriend", "", {params: {kkono : $rootScope.user.kkono, friendno : $scope.friend[index].kkono}})
+	           .then(function(result){ // 성공하면 오는 곳
+	        	   if(result.data.msg){
+	        		   alert(result.data.msg);
+	        	   }
+	        	   if(result.data.result){
+	        		   $scope.friend = result.data.result;
+	        	   }
+	          }, function(result){ // 실패(오류) 하면 오는 곳
+	        	  alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
+	   });
+	}
+	$scope.delfriend = function(index){
+	      $http.post("delfriend", "", {params: {kkono : $rootScope.user.kkono, friendno : $scope.friend[index].kkono}})
+	           .then(function(result){ // 성공하면 오는 곳
+	        	   if(result.data.msg){
+	        		   alert(result.data.msg);
+	        	   }
+	        	   if(result.data.result){
+	        		   $scope.friend = result.data.result;
+	        		   
+	        	   }
+	          }, function(result){ // 실패(오류) 하면 오는 곳
+	        	  alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 	   });
 	}
 	$scope.findroom = function(index){
@@ -43,7 +81,7 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         	  $scope.roomon = true;
         	  $scope.myroom(result.data.data, result.data.inven);
          }, function(result){ // 실패(오류) 하면 오는 곳
-           console.log(result);
+        	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
          });
 	}
 	$scope.myroom = function(data, inven){
@@ -121,6 +159,9 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         var checkTile = true;
         var checkFurniture = true;
         function setting(data, type){
+        	if(type == "tile"){
+        		background.clearRect(0,0,6400,6400);
+        	}
         	var array = [];
 	       	 $.each(data, function (index, value) {
 	                var y = (index - (index % 64)) / 64;
@@ -134,7 +175,6 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	        	            	} else if(type == "furniture"){
 	        	            		checkFurniture = false;
 	        	            	}
-	        	     			console.log(value);
 	        	     			$rootScope.items.push({itemno : value});
 	        	     			item = 
 	                            array.push({image: value, x: x, y: y, wd: result.wd, hd: result.hd});
@@ -146,7 +186,7 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         		background.clearRect(0,0,6400,6400);
         		return false;
         	}
-	       	console.log(array);
+
 	       	setTimeout(function(){
 	       		image(array, background);
 	       	}, 200);
@@ -156,7 +196,6 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	       		var image = new Image();
 	       		image.src = "resources/item/" +  value.image + ".png";
 	       		background.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
-               console.log( value.x * 100,  value.y * 100, value.wd, value.hd);
 	       	});
        }
         

@@ -8,6 +8,8 @@ public interface FriendDaoInterface {
 	public List<HashMap<String, Object>> selectbest();
 	public int addfriend(HashMap<String, Object> param);
 	public int delfriend(HashMap<String, Object> param);
+	public int dellike(HashMap<String, Object> param);
+	public int addlike(HashMap<String, Object> param);
 	public HashMap<String, Object> findroom(HashMap<String, Object> param);
 	public HashMap<String, Object> selectmyfriend(HashMap<String, Object> param);
 	public List<HashMap<String, Object>> myfriend(HashMap<String, Object> param);

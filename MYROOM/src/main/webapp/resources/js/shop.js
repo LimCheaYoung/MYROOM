@@ -60,6 +60,7 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
 	        	   if(result.data.msg){
 	        		   alert(result.data.msg);
 	        	   }
+	        	   $scope.shop = result.data.result;
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	   });
@@ -75,6 +76,7 @@ app.controller("myshop", function($rootScope,$scope, $http, LoginService){
 	        	   if(result.data.msg){
 	        		   alert(result.data.msg);
 	        	   }
+	        	   $scope.shop = result.data.result;
 	          }, function(result){ // 실패(오류) 하면 오는 곳
 	            console.log(result);
 	          });

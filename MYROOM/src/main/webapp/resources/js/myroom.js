@@ -89,25 +89,12 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	     		alert(result.data.msg);
 	     	} else {
 	     		alert("정상으로 저장 되었습니다.");
+	     		$scope.inven.data = result.data.inven;
 	     	}
 	       }, function(result){ // 실패(오류) 하면 오는 곳
 	     	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 	    });
 	}
-	$scope.selectinven = function(index){
-		$http.post("selectinven", "", {params: $scope.user})
-        .then(function(result){ // 성공하면 오는 곳
-	     	if(result.data.msg){
-	     		alert(result.data.msg);
-	     	} else {
-	     		$scope.inven.data = result.data.inven;
-	     		console.log($scope.inven);
-	     	}
-       }, function(result){ // 실패(오류) 하면 오는 곳
-     	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
-       });
-	}
-	
 	$scope.myroom = function(){
 		var myroom = document.getElementById("myCanvas");
 		var myobject = document.getElementById("myobject");
@@ -267,8 +254,13 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         	type = $scope.inven.data[index].type;
         	tilewd = $scope.inven.data[index].wd;
         	tilehd = $scope.inven.data[index].hd;
-        	console.log(tilewd, tilehd);
-            if (!set) {
+        	if(zoomout){
+        		zoomout = false;
+                $("#myCanvas").css("-webkit-transform", "none");
+                $("#myobject").css("-webkit-transform", "none");
+                $(".zoom-out").text("전체보기");
+        	}
+            if (!set && !zoomout) {
                 set = true;
                 $(".set").text("편집 ON");
                 setline();

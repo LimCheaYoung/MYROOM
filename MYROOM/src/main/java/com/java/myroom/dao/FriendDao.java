@@ -49,6 +49,16 @@ public class FriendDao implements FriendDaoInterface {
 	public List<HashMap<String, Object>> myfriend(HashMap<String, Object> param) {
 		return session.selectList("friend.myfriend", param);
 	}
+
+	@Override
+	public int dellike(HashMap<String, Object> param) {
+		return session.update("friend.dellike", param);
+	}
+
+	@Override
+	public int addlike(HashMap<String, Object> param) {
+		return session.update("friend.addlike", param);
+	}
 	
 	
 }

@@ -42,4 +42,15 @@
 		insert into friend(유저번호, 친구번호)
 		values (#{kkono}, #{friendno})
 	</insert>
+	<update  parameterType="hashmap" id="addlike">
+		update room
+		set 추천수 = 추천수 + 1
+		where 유저번호 = #{friendno}
+	</update>
+	<update  parameterType="hashmap" id="dellike">
+		update room
+		set 추천수 = 추천수 - 1
+		where 유저번호 = #{friendno}
+	</update>
+	
 </mapper>

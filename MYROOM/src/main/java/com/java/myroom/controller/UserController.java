@@ -33,9 +33,6 @@ public class UserController {
 		if(result.containsKey("msg")) {
 			return HttpUtil.returnJson(result);
 		}else {
-			result = udi.selectuser(param);
-			param.put("point", result.get("point"));
-			
 			result = new HashMap<String, Object>();
 			
 			if(session.getAttribute("user") == null) {

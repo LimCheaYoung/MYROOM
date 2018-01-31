@@ -38,7 +38,7 @@
 	</update>
 	<update parameterType="hashmap" id="upshop"> 
 		update shop
-		set 가격 = #{point}
+		set 가격 = #{price}
 		where 템번호 = #{itemno}
 	</update>
 	<update parameterType="hashmap" id="updel"> 
