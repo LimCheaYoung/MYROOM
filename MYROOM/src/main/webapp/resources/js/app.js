@@ -32,7 +32,7 @@ app.run(function($rootScope, $http){
 	      		  location.href = "/";
 	      	   }
 	         }, function(result){ // 실패(오류) 하면 오는 곳
-		         console.log(result);
+	        	 alert("로그아웃 중 예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 		    });
 	}
 	

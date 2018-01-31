@@ -31,7 +31,7 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
 	      $http.post("selectfriend", "", {params: $scope.friend})
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.friend = result.data.result;
-	        	   if(friend.lenght == 0){
+	        	   if($scope.friend.lenght == 0){
 	        		   alert("그런 사람 없습니다.");
 	        	   }
 	          }, function(result){ // 실패(오류) 하면 오는 곳
@@ -97,8 +97,6 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         var move = false;
         //전체보기보기모드
         var zoomout = false;
-        //편집모드
-        var set = false;
         var src;
         //아이템번호
         var itemno = 0;
@@ -134,13 +132,6 @@ app.controller("myfriend", function($rootScope,$scope, $http, LoginService){
         }
         //마우스가 왼쪽 버튼을 땔 때 
         function mouseup(event) {
-            if (set) {
-                var mouse = {
-                    x: event.offsetX,
-                    y: event.offsetY
-                }
-                tiledraw(mouse.x, mouse.y);
-            }
             move = false;
         }
 

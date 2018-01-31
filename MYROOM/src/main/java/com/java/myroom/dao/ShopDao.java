@@ -58,5 +58,11 @@ public class ShopDao implements ShopDaoInterface {
 		return session.update("shop.upshop", param);
 	}
 
+
+	@Override
+	public HashMap<String, Object> selecivtem(HashMap<String, Object> param) {
+		return session.selectOne("shop.selectivtem", param);
+	}
+
 	
 }

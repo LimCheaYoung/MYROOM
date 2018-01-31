@@ -26,6 +26,11 @@
       on s.`템번호` = i.`번호`
       where 삭제 = 'N' and i.`유저번호` = #{kkono}
 	</select>
+	<select parameterType="hashmap" id="selectivtem" resultType="hashmap"> 
+	select count(*) as count
+      from inven
+      where 유저번호 = #{kkono} and 템번호 = #{itemno}
+	</select>
 	<update parameterType="hashmap" id="uppoint"> 
 		update user
 		set 포인트 = (포인트 - ${price})

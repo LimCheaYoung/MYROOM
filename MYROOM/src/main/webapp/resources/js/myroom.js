@@ -3,7 +3,6 @@ var app = angular.module("MyRoom", []);
 app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	LoginService.async().then(function(){
 		var result = LoginService.data();
-		console.log("세션",result.data);
   	   if(result.data.status == 0){
   		  $rootScope.loginbool = false;
   		  location.href ="#!/friend";
@@ -21,17 +20,14 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	$scope.selecttype = {};
 	
 	$scope.selectRoom = function(){
-		console.log("room시작전", $rootScope.loginbool);
 		if($rootScope.loginbool){
-			console.log("room실행됨", $rootScope.loginbool);
 			$http.post("selectRoom", "", {params: $rootScope.user})
 	           .then(function(result){ // 성공하면 오는 곳
 	        	   $scope.data = result.data.result;
 	        	   $scope.inven.data = result.data.inven;
 	        	   $scope.myroom();
-	        	   console.log($scope.inven.data);
 	          }, function(result){ // 실패(오류) 하면 오는 곳
-	            console.log(result);
+	        	  /*alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");*/
 	       });
 		}
 	}
@@ -59,6 +55,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         		alert(result.data.msg);
         	} else {
         		alert("정상으로 저장 되었습니다.");
+        		location.href = "/";
         	}
           }, function(result){ // 실패(오류) 하면 오는 곳
         	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
@@ -89,7 +86,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	     		alert(result.data.msg);
 	     	} else {
 	     		alert("정상으로 저장 되었습니다.");
-	     		$scope.inven.data = result.data.inven;
+	     		location.href = "/";
 	     	}
 	       }, function(result){ // 실패(오류) 하면 오는 곳
 	     	 alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
@@ -123,6 +120,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         var tilewd;
         var tilehd;
         var type;
+        var remove = false;
         //아이템번호
         var itemno = 0;
         //스크롤
@@ -131,7 +129,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         //타일(배경)
         var tile = $scope.data.tile.split(" ");
         var furniture = $scope.data.object.split(" ");
-        
+
         wd = $("#myCanvas").width();
         hd = $("#myCanvas").height();
         
@@ -179,8 +177,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 
             }
         }
-        var checkTile = true;
-        var checkFurniture = true;
+
         function setting(data, type){
         	var array = [];
 	       	 $.each(data, function (index, value) {
@@ -190,56 +187,51 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	                if (value != 0) {
 	                	$.each($scope.inven.data, function (i, result) {
 	        	     		if(result.itemno == value){
-	        	     			if(type == "tile"){
-	        	     				checkTile = false;
-	        	            	} else if(type == "furniture"){
-	        	            		checkFurniture = false;
-	        	            	}
-	        	     			console.log(value);
 	        	     			$rootScope.items.push({itemno : value});
-	        	     			item = 
-	                            array.push({image: value, x: x, y: y, wd: result.wd, hd: result.hd});
+	        	     			item = array.push({image: value, x: x, y: y, wd: result.wd, hd: result.hd});
 	        	     		}  
 	                	});
 	                }
 	            });
-	       	if((checkTile && checkFurniture) && type == "furniture"){
-        		background.clearRect(0,0,6400,6400);
-        		return false;
-        	}
-	       	console.log(array);
 	       	setTimeout(function(){
-	       		image(array, background, type);
+	       		if(type == "tile"){
+	       			image(array, background);
+            	} else if(type == "furniture"){
+            		image(array, object);
+            	}
 	       	}, 200);
        }
-        function image(array, background, type){
+       function image(array, background){
      	   $.each(array, function (index, value) {
  	       		var image = new Image();
  	       		image.src = "resources/item/" +  value.image + ".png";
-	 	       	if(type == "tile"){
-	 	       		background.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
-	        	} else if(type == "furniture"){
-	        		obejct.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
-	        	}
+	 	       	background.drawImage(image, value.x * 100, value.y * 100, value.wd, value.hd);
  	       	});
         }
-
-       setting(tile, 'tile');
-       setting(furniture, 'furniture');
+        $scope.room = function(){
+        	setting(tile, 'tile');
+            setting(furniture, 'furniture');
+        };
+        $scope.room();
         
         $(".zoom-out").click(function () {
+        	if(set){
+        		set = false;
+        		$(".set").text("편집 OFF");
+            	myinterface.clearRect(0,0,6400,6400);
+            }
+        	
             if (zoomout) {
                 zoomout = false;
                 $("#myCanvas").css("-webkit-transform", "none");
                 $("#myobject").css("-webkit-transform", "none");
                 $(".zoom-out").text("전체보기");
             } else {
-                zoomout = true;
+            	zoomout = true;
                 $("#myCanvas").css("-webkit-transform", "scale(0.2)");
                 $("#myobject").css("-webkit-transform", "scale(0.2)");
                 $(".inBox").scrollLeft(0);
                 $(".inBox").scrollTop(0);
-                set = false;
                 $(".set").text("편집 OFF");
                 $(".tab-content img").css("border", "none");
                 $("#myCanvas").css("cursor", "move");
@@ -254,27 +246,47 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
         	type = $scope.inven.data[index].type;
         	tilewd = $scope.inven.data[index].wd;
         	tilehd = $scope.inven.data[index].hd;
+        	remove = false;
         	if(zoomout){
         		zoomout = false;
                 $("#myCanvas").css("-webkit-transform", "none");
                 $("#myobject").css("-webkit-transform", "none");
                 $(".zoom-out").text("전체보기");
         	}
-            if (!set && !zoomout) {
+            if (!set) {
                 set = true;
                 $(".set").text("편집 ON");
                 setline();
                 $("#myCanvas").css("cursor", "pointer");   
             }
         }
-        
+        $scope.remove = function(index){
+        	remove = true;
+        	itemno = 0;
+        	type = index;
+        	tilewd = 100;
+        	tilehd = 100;
+        	if(zoomout){
+        		zoomout = false;
+                $("#myCanvas").css("-webkit-transform", "none");
+                $("#myobject").css("-webkit-transform", "none");
+                $(".zoom-out").text("전체보기");
+        	}
+            if (!set) {
+                set = true;
+                $(".set").text("편집 ON");
+                setline();
+                $("#myCanvas").css("cursor", "pointer");   
+            }
+        }
         //편집모드 가이드 
         function tiledraw(x, y) {
             var px = x - (x % 100);
             var py = y - (y % 100);
-            
-            var image = new Image();
-            image.src = "resources/item/" +  itemno + ".png";
+            if(!remove){
+            	var image = new Image();
+            	image.src = "resources/item/" +  itemno + ".png";
+            }
             if(type == 1){
             	$.each($scope.inven.data, function (i, result) {
     	     		if(tile[(py / 100) * 64 + px / 100] == result.itemno){
@@ -282,22 +294,30 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
     	     		}  
             	});
             	tile[(py / 100) * 64 + px / 100] = itemno;
-            	background.clearRect(px, py, tilewd, tilehd);
-            	background.drawImage(image, px, py, tilewd, tilehd);
+            	if(!remove){
+                	background.drawImage(image, px, py, tilewd, tilehd);            		
+            	}
             }else if(type == 2){
             	$.each($scope.inven.data, function (i, result) {
-    	     		if(tile[(py / 100) * 64 + px / 100] == result.itemno){
+    	     		if(furniture[(py / 100) * 64 + px / 100] == result.itemno){
     	     			object.clearRect(px, py, result.wd, result.hd);
     	     		}  
             	});
-            	object[(py / 100) * 64 + px / 100] = itemno;
-            	object.clearRect(px, py, tilewd, tilehd);
-            	object.drawImage(image, px, py, tilewd, tilehd);
+            	furniture[(py / 100) * 64 + px / 100] = itemno;
+            	if(!remove){
+            		object.drawImage(image, px, py, tilewd, tilehd);            		
+            	}
             }
             
         }
 
         $(".set").click(function () {
+        	if(zoomout){
+        		zoomout = false;
+                $("#myCanvas").css("-webkit-transform", "none");
+                $("#myobject").css("-webkit-transform", "none");
+                $(".zoom-out").text("전체보기");
+        	}
             if (!set && !zoomout) {
                 set = true;
                 $(".set").text("편집 ON");
@@ -327,7 +347,7 @@ app.controller("myroom", function($rootScope,$scope, $http, LoginService){
 	 	 	     		location.href = "/";
 	 	 	     	}
 	 	          }, function(result){ // 실패(오류) 하면 오는 곳
-	 	            console.log(result);
+	 	        	 /*alert("예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");*/
 	 	       });
                
             }

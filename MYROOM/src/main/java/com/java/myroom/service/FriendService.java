@@ -58,7 +58,7 @@ public class FriendService implements FriendServiceInterface {
 				status = fdi.addlike(param);
 				if(status == 1) {
 					result.put("msg", "추천하였습니다.");
-					result.put("result", fdi.selectfriend(param));
+					result.put("result", fdi.selectbest());
 				}
 
 			}else {

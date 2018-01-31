@@ -24,16 +24,18 @@
                 <div class="panel-body">
                     <div class="tab-content">
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 0}" id="tab1danger" >
+	                       <button class="btn remove" style="margin-bottom:5px" data-ng-click="remove(1)">지우기</button>
 	                       <div class="myinven col-md-12 text-right">
-		                        <div class="myitem col-md-1 text-center" data-ng-repeat="rows in inven.data">
+		                        <div class="myitem text-center" data-ng-repeat="rows in inven.data">
 		                            <img data-ng-src="{{'resources/item/' + rows.itemno + '.png'}}" data-ng-if="rows.type == 1" data-ng-click="imgivent($index)">
 		                            <p data-ng-if="rows.type == 1">{{rows.name}}</p>
 		                        </div>
                     		</div>
                         </div>
                         <div class="tab-pane fade in" data-ng-class="{active : tabActive == 1}" id="tab2danger">
+	                       <button class="btn remove" style="margin-bottom:5px" data-ng-click="remove(2)">지우기</button>
 	                       <div class="myinven col-md-12 text-right">
-		                        <div class="myitem col-md-1 text-center" data-ng-repeat="rows in inven.data">
+		                        <div class="myitem text-center" data-ng-repeat="rows in inven.data">
 		                            <img data-ng-src="{{'resources/item/' + rows.itemno + '.png'}}" data-ng-if="rows.type == 2" data-ng-click="imgivent($index)">
 		                            <p data-ng-if="rows.type == 2">{{rows.name}}</p>
 		                        </div>

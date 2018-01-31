@@ -24,6 +24,10 @@ public class FriendController {
 	public ModelAndView selectbest(HttpServletRequest req){
 		return HttpUtil.returnJson(fsi.selectbest());
 	}
+	@RequestMapping(value = "/selectfriend", method = RequestMethod.POST)
+	public ModelAndView selectfriend(HttpServletRequest req){
+		return HttpUtil.returnJson(fsi.selectfriend(HttpUtil.paramMap(req)));
+	}
 	@RequestMapping(value = "/findroom", method = RequestMethod.POST)
 	public ModelAndView findroom(HttpServletRequest req){
 		return HttpUtil.returnJson(fsi.findroom(HttpUtil.paramMap(req)));

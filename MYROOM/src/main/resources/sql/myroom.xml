@@ -17,7 +17,7 @@
       select item.`타입` as type, item.`높이` as hd,item.`가로` as wd, item.`이름` as name, item.`번호` as itemno
       from inven inner join item
 	  on inven.`템번호` = item.`번호`  
-	  where item.`유저번호` = #{kkono}
+	  where inven.`유저번호` = #{kkono}
 	</select>
 	<select parameterType="hashmap" id="selectitem" resultType="hashmap"> 
       select item.`번호` as itemno, count(*) as count

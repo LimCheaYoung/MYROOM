@@ -23,7 +23,7 @@ public class ShopController {
 	
 	@RequestMapping(value = "/selectshop", method = RequestMethod.POST)
 	public ModelAndView selectshop(HttpServletRequest req){
-		return HttpUtil.returnJson(ssi.selectshop());
+		return HttpUtil.returnJson(ssi.selectshop(HttpUtil.paramMap(req)));
 	}
 	@RequestMapping(value = "/searchshop", method = RequestMethod.POST)
 	public ModelAndView searchshop(HttpServletRequest req){

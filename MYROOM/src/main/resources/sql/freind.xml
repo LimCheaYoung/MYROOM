@@ -7,7 +7,7 @@
       select 이름 as name, 이메일 as email, 추천수 as best, 카카오번호 as kkono
       from room inner join user
 	  on room.`유저번호` = user.`카카오번호`
-	  where user.`이메일` = #{email}
+	  where user.`이름` like '%${name}%'
 	</select>
 	<select parameterType="hashmap" id="selectbest" resultType="hashmap"> 
       select 이름 as name, 이메일 as email, 추천수 as best, 카카오번호 as kkono

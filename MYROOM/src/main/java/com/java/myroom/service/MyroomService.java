@@ -54,10 +54,10 @@ public class MyroomService implements MyroomServiceInterface {
 	public HashMap<String, Object> additem(HashMap<String, Object> param, HttpServletRequest req) throws Exception{
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		result = mdi.selectitem(param);
-		/*String path = req.getSession().getServletContext().getRealPath("/");*/
+		String path = req.getSession().getServletContext().getRealPath("/");
 		
 		if(Integer.parseInt(result.get("count").toString()) != 0) {
-			result.put("msg", "이미 이름입니다.");
+			result.put("msg", "이미 있는 이름입니다.");
 		}else {
 			int status = mdi.additem(param);
 			result = mdi.selectitem(param);
@@ -67,7 +67,7 @@ public class MyroomService implements MyroomServiceInterface {
 				if(status != 1) {
 					result.put("msg", "예기치 못한 오류가 발생하였습니다. 다시 시도해주세요.");
 				}else {
-					String path = "C:/Users/cod_d/git/MYROOM/MYROOM/src/main/webapp/";
+					/*String path = "C:/Users/GD/git/MYROOM/MYROOM/src/main/webapp/";*/
 					fsi.Fileupload(path, param.get("data").toString(), param.get("itemno").toString());
 					return param;
 				}

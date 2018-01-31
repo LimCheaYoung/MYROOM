@@ -21,8 +21,9 @@ public class ShopService implements ShopServiceInterface {
 	MyroomServiceInterface msi;
 
 	@Override
-	public HashMap<String, Object> selectshop() {
+	public HashMap<String, Object> selectshop(HashMap<String, Object> param) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
+		result.put("point", sdi.selectpoint(param));
 		result.put("result", sdi.selectshop());
 		return result;
 	}
@@ -30,6 +31,7 @@ public class ShopService implements ShopServiceInterface {
 	@Override
 	public HashMap<String, Object> searchshop(HashMap<String, Object> param) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
+		result.put("point", sdi.selectpoint(param));
 		result.put("result", sdi.searchshop(param));
 		return result;
 	}
@@ -42,12 +44,17 @@ public class ShopService implements ShopServiceInterface {
 		if( point < price ) {
 			result.put("msg", "보유하신 포인트가 부족합니다.");
 		}else {
+			result = sdi.selecivtem(param);
+			if(Integer.parseInt(result.get("count").toString()) != 0) {
+				result.put("msg", "이미 소유하신 아이템입니다.");
+				return result;
+			}
 			int status = sdi.uppoint2(param);
 			if(status == 1) {
 				status = sdi.uppoint(param);
 				if(status == 1) {
 					result = msi.addinven(param);
-					result.put("result", sdi.selectshop());
+					result.put("point", sdi.selectpoint(param));
 				}
 			}else {
 				result.put("msg", "구매과정에서 문제가 발생하였습니다.");
@@ -60,6 +67,7 @@ public class ShopService implements ShopServiceInterface {
 	public HashMap<String, Object> selectmine(HashMap<String, Object> param) {
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		result.put("result", sdi.selectmine(param));
+		result.put("point", sdi.selectpoint(param));
 		return result;
 	}
 
